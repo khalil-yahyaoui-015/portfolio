@@ -109,6 +109,21 @@
   .project-desc { font-size: 0.85rem; color: rgba(240,239,232,0.65); line-height: 1.7; margin-bottom: 1.5rem; flex: 1; }
   .project-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
   .project-tag { display: inline-block; padding: 0.2rem 0.55rem; background: rgba(139,232,200,0.07); border: 0.5px solid rgba(139,232,200,0.2); border-radius: 2px; font-size: 0.68rem; color: var(--accent2); }
+  .project-link {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 0.5px solid rgba(139,232,200,0.3);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .project-link:hover {
+    color: var(--text);
+    border-color: var(--border2);
+  }
 
   /* CONTACT */
   #contact { background: var(--bg2); border-top: 0.5px solid var(--border); text-align: center; }
@@ -386,6 +401,11 @@
         <span class="project-tag">JavaScript</span><span class="project-tag">HTML Canvas</span>
         <span class="project-tag">Game design</span>
         <span class="project-tag">Vanilla JS</span>
+      </div>
+      <div class="project-links" style="margin-top: 1.25rem;">
+        <a href="https://github.com/khalil-yahyaoui-015/terry-torry" target="_blank" class="project-link">
+          GitHub →
+        </a>
       </div>
     </div>
     <div class="project-card">
