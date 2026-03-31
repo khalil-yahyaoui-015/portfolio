@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Khalil Yahyaoui — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0f; --bg2: #111118; --bg3: #18181f;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13);
+    --text: #f0efe8; --muted: #888885;
+    --accent: #c8f050; --accent2: #8be8c8; --accent3: #f0b050;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --font-serif: 'Instrument Serif', serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 3rem; background: rgba(10,10,15,0.85); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border); }
+  .nav-logo { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+  .nav-logo span { color: var(--accent); }
+  .nav-right { display: flex; align-items: center; gap: 2.5rem; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* LANG TOGGLE */
+  .lang-toggle { display: flex; align-items: center; background: var(--bg3); border: 0.5px solid var(--border2); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+  .lang-btn { padding: 0.35rem 0.8rem; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; background: transparent; color: var(--muted); cursor: pointer; transition: all 0.18s; }
+  .lang-btn.active { background: var(--accent); color: #0a0a0f; font-weight: 500; }
+  .lang-btn:not(.active):hover { color: var(--text); }
+  .lang-sep { width: 0.5px; background: var(--border2); height: 24px; flex-shrink: 0; }
+
+  /* i18n */
+  [data-lang] { display: none; }
+  body.lang-fr [data-lang="fr"] { display: revert; }
+  body.lang-en [data-lang="en"] { display: revert; }
+
+  /* HERO */
+  #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 3rem; position: relative; overflow: hidden; }
+  .hero-grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(200,240,80,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(200,240,80,0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
+  .hero-glow { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(200,240,80,0.06) 0%, transparent 70%); top: -100px; right: -100px; pointer-events: none; }
+  .hero-tag { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem; }
+  .hero-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
+  .hero-name { font-family: var(--font-display); font-weight: 800; font-size: clamp(3.5rem, 9vw, 7rem); line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+  .hero-name .last { color: var(--accent); }
+  .hero-subtitle { font-family: var(--font-serif); font-style: italic; font-size: 1.25rem; color: var(--muted); max-width: 520px; margin-bottom: 3rem; line-height: 1.5; }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.75rem; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; border-radius: 3px; transition: all 0.2s; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #0a0a0f; font-weight: 500; }
+  .btn-primary:hover { background: #d8ff60; }
+  .btn-outline { background: transparent; color: var(--text); border: 0.5px solid var(--border2); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .hero-scroll { position: absolute; bottom: 2rem; left: 3rem; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; animation: bounce 2s infinite; }
+  .hero-scroll::after { content: ' ↓'; }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+  /* SECTIONS */
+  section { padding: 7rem 3rem; }
+  .section-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+  .section-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+  .section-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 3.5rem; }
+
+  /* ABOUT */
+  #about { background: var(--bg2); border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .about-bio { font-size: 1.05rem; line-height: 1.8; color: rgba(240,239,232,0.8); }
+  .about-bio p + p { margin-top: 1.2rem; }
+  .about-bio strong { color: var(--accent); font-weight: 500; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .stat-card { background: var(--bg3); border: 0.5px solid var(--border); border-radius: 4px; padding: 1.5rem; }
+  .stat-num { font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 0.4rem; }
+  .stat-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+  /* SKILLS */
+  #skills { background: var(--bg); }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+  .skill-category { background: var(--bg3); border: 0.5px solid var(--border); border-radius: 4px; padding: 1.75rem; transition: border-color 0.2s; }
+  .skill-category:hover { border-color: var(--border2); }
+  .skill-cat-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1.2rem; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tag { display: inline-block; padding: 0.3rem 0.75rem; background: rgba(255,255,255,0.04); border: 0.5px solid var(--border2); border-radius: 2px; font-size: 0.75rem; color: var(--text); }
+
+  /* EXPERIENCE */
+  #experience { background: var(--bg2); border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); }
+  .exp-item { display: grid; grid-template-columns: 200px 1fr; gap: 3rem; padding: 3rem 0; border-bottom: 0.5px solid var(--border); }
+  .exp-item:first-child { padding-top: 0; }
+  .exp-item:last-child { border-bottom: none; }
+  .exp-date { font-size: 0.72rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; margin-bottom: 0.4rem; }
+  .exp-company { font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; color: var(--accent3); }
+  .exp-loc { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
+  .exp-role { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; letter-spacing: -0.01em; margin-bottom: 1rem; }
+  .exp-desc { color: rgba(240,239,232,0.75); font-size: 0.9rem; line-height: 1.8; margin-bottom: 1.2rem; }
+  .exp-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .stack-tag { display: inline-block; padding: 0.2rem 0.6rem; background: rgba(200,240,80,0.08); border: 0.5px solid rgba(200,240,80,0.25); border-radius: 2px; font-size: 0.7rem; color: var(--accent); }
+
+  /* PROJECTS */
+  #projects { background: var(--bg); }
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+  .project-card { background: var(--bg3); border: 0.5px solid var(--border); border-radius: 4px; padding: 2rem; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s; }
+  .project-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+  .project-card.featured { border-color: rgba(200,240,80,0.2); background: linear-gradient(135deg, rgba(200,240,80,0.03) 0%, var(--bg3) 60%); }
+  .project-num { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; margin-bottom: 1rem; }
+  .project-title { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; margin-bottom: 0.75rem; line-height: 1.2; }
+  .project-desc { font-size: 0.85rem; color: rgba(240,239,232,0.65); line-height: 1.7; margin-bottom: 1.5rem; flex: 1; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .project-tag { display: inline-block; padding: 0.2rem 0.55rem; background: rgba(139,232,200,0.07); border: 0.5px solid rgba(139,232,200,0.2); border-radius: 2px; font-size: 0.68rem; color: var(--accent2); }
+
+  /* CONTACT */
+  #contact { background: var(--bg2); border-top: 0.5px solid var(--border); text-align: center; }
+  .contact-inner { max-width: 600px; margin: 0 auto; }
+  .contact-email { font-family: var(--font-display); font-size: clamp(1.1rem, 2.2vw, 1.7rem); font-weight: 700; color: var(--accent); text-decoration: none; display: inline-block; margin: 2rem 0; transition: opacity 0.2s; }
+  .contact-email:hover { opacity: 0.7; }
+  .contact-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
+  .contact-link { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; padding-bottom: 2px; border-bottom: 0.5px solid transparent; transition: color 0.2s, border-color 0.2s; }
+  .contact-link:hover { color: var(--text); border-color: var(--border2); }
+
+  footer { padding: 2rem 3rem; border-top: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--muted); }
+
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .about-grid, .exp-item { grid-template-columns: 1fr; gap: 2rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body class="lang-fr">
+
+<nav>
+  <a href="#hero" class="nav-logo">K<span>.</span>Y</a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#about" data-lang="fr">À propos</a><a href="#about" data-lang="en">About</a></li>
+      <li><a href="#skills" data-lang="fr">Compétences</a><a href="#skills" data-lang="en">Skills</a></li>
+      <li><a href="#experience" data-lang="fr">Expérience</a><a href="#experience" data-lang="en">Experience</a></li>
+      <li><a href="#projects" data-lang="fr">Projets</a><a href="#projects" data-lang="en">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">FR</button>
+      <div class="lang-sep"></div>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-tag">
+    <span data-lang="fr">Disponible — co-op été 2027</span>
+    <span data-lang="en">Available — co-op summer 2027</span>
+  </div>
+  <h1 class="hero-name">Khalil<br><span class="last">Yahyaoui</span></h1>
+  <p class="hero-subtitle">
+    <span data-lang="fr">Ingénieur logiciel & développeur full stack — je construis des systèmes qui tiennent la route.</span>
+    <span data-lang="en">Software engineer & full stack developer — I build systems that actually hold up.</span>
+  </p>
+  <div class="hero-ctas">
+    <a href="#projects" class="btn btn-primary">
+      <span data-lang="fr">Voir mes projets →</span>
+      <span data-lang="en">See my work →</span>
+    </a>
+    <a href="#contact" class="btn btn-outline">
+      <span data-lang="fr">Me contacter</span>
+      <span data-lang="en">Get in touch</span>
+    </a>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<section id="about">
+  <div class="section-label">
+    <span data-lang="fr">À propos</span><span data-lang="en">About</span>
+  </div>
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title">
+        <span data-lang="fr">Curieux par nature,<br>rigoureux par formation.</span>
+        <span data-lang="en">Curious by nature,<br>rigorous by training.</span>
+      </h2>
+      <div class="about-bio fade-in">
+        <p data-lang="fr">Étudiant en 3e année de <strong>BASc en génie informatique</strong> à l'Université d'Ottawa, je combine une formation solide en systèmes embarqués et architecture numérique avec une expérience pratique en développement full stack et data engineering.</p>
+        <p data-lang="fr">J'ai conçu des plateformes web complètes, architecturé des entrepôts de données sur Databricks et intégré des solutions d'IA en production. Ce qui m'anime : résoudre des problèmes concrets avec des outils bien choisis.</p>
+        <p data-lang="fr">Quadrilingue — <strong>français, anglais, arabe, espagnol</strong> — je m'intègre facilement dans des équipes multiculturelles.</p>
+        <p data-lang="en">Third-year <strong>BASc Computer Engineering</strong> student at the University of Ottawa, combining a solid foundation in embedded systems and digital architecture with hands-on experience in full stack development and data engineering.</p>
+        <p data-lang="en">I've designed complete web platforms, architected data warehouses on Databricks, and integrated AI solutions into production. What drives me: solving real problems with the right tools.</p>
+        <p data-lang="en">Quadrilingual — <strong>French, English, Arabic, Spanish</strong> — I integrate easily into multicultural teams.</p>
+      </div>
+    </div>
+    <div class="about-stats fade-in">
+      <div class="stat-card">
+        <div class="stat-num">2+</div>
+        <div class="stat-label" data-lang="fr">Stages complétés</div>
+        <div class="stat-label" data-lang="en">Internships done</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">4</div>
+        <div class="stat-label" data-lang="fr">Langues parlées</div>
+        <div class="stat-label" data-lang="en">Languages spoken</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2028</div>
+        <div class="stat-label" data-lang="fr">Diplôme prévu</div>
+        <div class="stat-label" data-lang="en">Expected graduation</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">uOttawa</div>
+        <div class="stat-label" data-lang="fr">Université d'Ottawa</div>
+        <div class="stat-label" data-lang="en">University of Ottawa</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-label">
+    <span data-lang="fr">Compétences</span><span data-lang="en">Skills</span>
+  </div>
+  <h2 class="section-title">
+    <span data-lang="fr">Ma boîte à outils.</span><span data-lang="en">My toolkit.</span>
+  </h2>
+  <div class="skills-grid fade-in">
+    <div class="skill-category">
+      <div class="skill-cat-label" data-lang="fr">Langages</div>
+      <div class="skill-cat-label" data-lang="en">Languages</div>
+      <div class="skill-tags">
+        <span class="tag">Python</span><span class="tag">Java</span><span class="tag">C++</span>
+        <span class="tag">JavaScript</span><span class="tag">HTML</span><span class="tag">VHDL</span>
+      </div>
+    </div>
+    <div class="skill-category">
+      <div class="skill-cat-label">Web & Backend</div>
+      <div class="skill-tags">
+        <span class="tag">FastAPI</span><span class="tag">React.js</span><span class="tag">Django</span>
+        <span class="tag">Docker</span><span class="tag">PostgreSQL</span>
+      </div>
+    </div>
+    <div class="skill-category">
+      <div class="skill-cat-label">Data & Cloud</div>
+      <div class="skill-tags">
+        <span class="tag">Databricks</span><span class="tag">SQL</span><span class="tag">Power BI</span>
+        <span class="tag" data-lang="fr">Architecture médaillon</span>
+        <span class="tag" data-lang="en">Medallion architecture</span>
+      </div>
+    </div>
+    <div class="skill-category">
+      <div class="skill-cat-label" data-lang="fr">Outils & Ingénierie</div>
+      <div class="skill-cat-label" data-lang="en">Tools & Engineering</div>
+      <div class="skill-tags">
+        <span class="tag">GitHub</span><span class="tag">UML</span><span class="tag">Quartus II</span>
+        <span class="tag">MATLAB</span><span class="tag">Simulink</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="section-label">
+    <span data-lang="fr">Expérience</span><span data-lang="en">Experience</span>
+  </div>
+  <h2 class="section-title">
+    <span data-lang="fr">Ce que j'ai construit.</span><span data-lang="en">What I've built.</span>
+  </h2>
+  <div class="exp-list">
+    <div class="exp-item fade-in">
+      <div class="exp-meta">
+        <div class="exp-date">
+          <span data-lang="fr">Mai – Août 2025</span><span data-lang="en">May – Aug 2025</span>
+        </div>
+        <div class="exp-company">Agilerack Inc.</div>
+        <div class="exp-loc">Ottawa, Ontario</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">
+          <span data-lang="fr">Stagiaire développeur full stack — FiscoTax</span>
+          <span data-lang="en">Full Stack Developer Intern — FiscoTax</span>
+        </div>
+        <div class="exp-desc" data-lang="fr">Conception et développement d'une plateforme de gestion fiscale de bout en bout. Interface responsive pour la saisie de revenus, génération automatisée de rapports PDF, visualisations interactives de scénarios fiscaux. Intégration d'un chatbot IA (Ollama) pour l'assistance en temps réel. Déploiement dans un environnement Docker sécurisé.</div>
+        <div class="exp-desc" data-lang="en">End-to-end design of a tax management platform. Responsive interface for income data entry, automated PDF report generation, and interactive tax scenario simulations. Integrated an AI chatbot (Ollama) for real-time assistance. Deployed in a secure Docker environment with domain management.</div>
+        <div class="exp-stack">
+          <span class="stack-tag">FastAPI</span><span class="stack-tag">React.js</span>
+          <span class="stack-tag">Docker</span><span class="stack-tag">PostgreSQL</span>
+          <span class="stack-tag">Ollama</span><span class="stack-tag">UML</span>
+        </div>
+      </div>
+    </div>
+    <div class="exp-item fade-in">
+      <div class="exp-meta">
+        <div class="exp-date">
+          <span data-lang="fr">Juin – Août 2024</span><span data-lang="en">Jun – Aug 2024</span>
+        </div>
+        <div class="exp-company">Momentum Technologies</div>
+        <div class="exp-loc">Québec City, QC</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">
+          <span data-lang="fr">Stagiaire développeur data</span>
+          <span data-lang="en">Data Developer Intern</span>
+        </div>
+        <div class="exp-desc" data-lang="fr">Construction d'un entrepôt de données sur Databricks selon l'architecture médaillon (bronze, silver, gold). Développement de pipelines automatisés de nettoyage, validation et transformation. Création de tableaux de bord Power BI pour le suivi des KPIs.</div>
+        <div class="exp-desc" data-lang="en">Built a data warehouse on Databricks using the medallion architecture (bronze, silver, gold). Developed automated cleaning, validation, and transformation pipelines. Created Power BI dashboards enabling business teams to track KPIs independently.</div>
+        <div class="exp-stack">
+          <span class="stack-tag">Databricks</span><span class="stack-tag">SQL</span>
+          <span class="stack-tag">Power BI</span><span class="stack-tag">ETL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-label">
+    <span data-lang="fr">Projets</span><span data-lang="en">Projects</span>
+  </div>
+  <h2 class="section-title">
+    <span data-lang="fr">Ce que je fais par curiosité.</span><span data-lang="en">What I build for fun.</span>
+  </h2>
+  <div class="projects-grid fade-in">
+    <div class="project-card featured">
+      <div class="project-num">
+        <span data-lang="fr">01 — Académique</span><span data-lang="en">01 — Academic</span>
+      </div>
+      <div class="project-title" data-lang="fr">Application PC sur demande</div>
+      <div class="project-title" data-lang="en">On-Demand PC Service App</div>
+      <div class="project-desc" data-lang="fr">Plateforme mettant en relation des utilisateurs avec des techniciens spécialisés en assemblage PC. Conception UML complète, modélisation système et développement full stack — SEG2505.</div>
+      <div class="project-desc" data-lang="en">Platform connecting users with PC build specialists. Complete UML design, system modeling, and full stack development — SEG2505 capstone.</div>
+      <div class="project-tags">
+        <span class="project-tag">UML</span>
+        <span class="project-tag" data-lang="fr">[Stack à préciser]</span>
+        <span class="project-tag" data-lang="en">[Stack TBD]</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">02 — Personnel / Personal</div>
+      <div class="project-title">FPS 3D Browser</div>
+      <div class="project-desc" data-lang="fr">Jeu de tir à la première personne dans le navigateur en single HTML file. Three.js pour le rendu 3D, pointer lock API, collision detection.</div>
+      <div class="project-desc" data-lang="en">First-person shooter running entirely in the browser as a single HTML file. Three.js rendering, pointer lock API, collision detection.</div>
+      <div class="project-tags">
+        <span class="project-tag">Three.js</span><span class="project-tag">JavaScript</span>
+        <span class="project-tag">WebGL</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">03 — Personnel / Personal</div>
+      <div class="project-title" data-lang="fr">Jeux browser — Suite</div>
+      <div class="project-title" data-lang="en">Browser Games — Collection</div>
+      <div class="project-desc" data-lang="fr">Collection de jeux single-file en vanilla JS : conquête de territoire, simulation de supermarché, jeu d'horreur style FNAF. Zéro framework.</div>
+      <div class="project-desc" data-lang="en">Single-file vanilla JS games: territory conquest, supermarket simulation, FNAF-style horror. Zero frameworks, maximum browser pushing.</div>
+      <div class="project-tags">
+        <span class="project-tag">JavaScript</span><span class="project-tag">HTML Canvas</span>
+        <span class="project-tag">Game design</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">
+        <span data-lang="fr">04 — À ajouter</span><span data-lang="en">04 — To add</span>
+      </div>
+      <div class="project-title" data-lang="fr">[Ton prochain projet]</div>
+      <div class="project-title" data-lang="en">[Your next project]</div>
+      <div class="project-desc" data-lang="fr">Remplace cette carte par ton side project fintech ou setup cybersécurité une fois le co-op terminé.</div>
+      <div class="project-desc" data-lang="en">Replace this card with a fintech side project or cybersecurity setup once your co-op wraps up.</div>
+      <div class="project-tags"><span class="project-tag">[Stack]</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label" style="justify-content: center;">Contact</div>
+    <h2 class="section-title" style="margin-bottom: 0.5rem;">
+      <span data-lang="fr">On travaille ensemble ?</span>
+      <span data-lang="en">Let's work together.</span>
+    </h2>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+      <span data-lang="fr">Disponible pour un stage co-op à partir de l'été 2027.</span>
+      <span data-lang="en">Available for co-op internship opportunities starting summer 2027.</span>
+    </p>
+    <a href="mailto:officiel.khalil.pro@gmail.com" class="contact-email">officiel.khalil.pro@gmail.com</a>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/khalil-yahyaoui-54a30b2a0" class="contact-link" target="_blank">LinkedIn</a>
+      <a href="https://github.com/[ton-github]" class="contact-link" target="_blank">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 Khalil Yahyaoui</span>
+  <span>Ottawa, Ontario, Canada</span>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.documentElement.lang = lang;
+    localStorage.setItem('ky-lang', lang);
+  }
+  const saved = localStorage.getItem('ky-lang');
+  if (saved) setLang(saved);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
