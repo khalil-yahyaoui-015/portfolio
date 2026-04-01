@@ -1,498 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Terry Torry — Browser Game · Khalil</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <style>
-    :root {
-      --bg: #0a0a0f;
-      --bg-card: #111118;
-      --bg-elevated: #16161f;
-      --border: #1e1e2e;
-      --border-light: #2a2a3e;
-      --accent: #f97316;
-      --accent-dim: rgba(249, 115, 22, 0.12);
-      --accent-glow: rgba(249, 115, 22, 0.06);
-      --green: #4ade80;
-      --text: #e2e2ee;
-      --text-muted: #7a7a9a;
-      --text-dim: #4a4a6a;
-      --mono: 'DM Mono', monospace;
-      --display: 'Syne', sans-serif;
-      --serif: 'Instrument Serif', serif;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg); color: var(--text);
-      font-family: var(--mono); font-weight: 300;
-      line-height: 1.7; min-height: 100vh;
-    }
-
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2.5rem; height: 60px;
-      background: rgba(10, 10, 15, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo { font-family: var(--mono); font-size: 0.8rem; color: var(--text-muted); text-decoration: none; letter-spacing: 0.05em; }
-    .nav-logo span { color: var(--accent); }
-    .nav-back { display: flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.75rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
-    .nav-back:hover { color: var(--accent); }
-    .nav-back svg { width: 14px; height: 14px; }
-
-    /* HERO with canvas-style bg */
-    .hero {
-      padding: 120px 2.5rem 60px;
-      max-width: 900px; margin: 0 auto;
-      position: relative;
-    }
-    .hero-label { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.2rem; }
-    .hero h1 { font-family: var(--display); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1.2rem; }
-    .hero-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 620px; margin-bottom: 2rem; line-height: 1.8; }
-    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2.5rem; }
-    .tag { font-family: var(--mono); font-size: 0.7rem; padding: 0.3rem 0.75rem; border: 1px solid var(--border-light); color: var(--text-muted); border-radius: 2px; letter-spacing: 0.05em; }
-    .hero-meta { display: flex; gap: 2.5rem; flex-wrap: wrap; padding-top: 2rem; border-top: 1px solid var(--border); }
-    .meta-label { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
-    .meta-value { font-size: 0.9rem; color: var(--text); }
-
-    .content { max-width: 900px; margin: 0 auto; padding: 0 2.5rem 6rem; }
-
-    .section { margin-bottom: 4rem; }
-    .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.8rem; }
-    .section-num { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); letter-spacing: 0.1em; }
-    .section-title { font-family: var(--mono); font-size: 0.8rem; color: var(--text); letter-spacing: 0.08em; text-transform: uppercase; }
-    .section-line { flex: 1; height: 1px; background: var(--border); }
-
-    .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
-    .overview-cell { background: var(--bg-card); padding: 1.5rem; }
-    .overview-cell.full { grid-column: 1 / -1; }
-    .cell-label { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
-    .cell-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.8; }
-
-    /* Live mini-game preview */
-    .game-preview {
-      background: #050508;
-      border: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-    .game-preview-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.6rem 1rem;
-      background: var(--bg-elevated);
-      border-bottom: 1px solid var(--border);
-    }
-    .game-preview-title { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); }
-    .game-preview-badge { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); }
-    #gameCanvas { display: block; width: 100%; }
-
-    /* System breakdown */
-    .systems-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-    .system-card {
-      background: var(--bg-card); border: 1px solid var(--border); padding: 1.4rem;
-      transition: border-color 0.2s;
-    }
-    .system-card:hover { border-color: var(--accent); }
-    .system-icon { font-size: 1.3rem; margin-bottom: 0.7rem; }
-    .system-name { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); margin-bottom: 0.4rem; }
-    .system-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
-
-    /* Code blocks */
-    .code-block { background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; margin-bottom: 1.5rem; }
-    .code-header { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; background: var(--bg-elevated); border-bottom: 1px solid var(--border); }
-    .code-filename { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); }
-    .code-lang { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); }
-    .code-block pre { margin: 0; overflow-x: auto; }
-    .code-block pre code { font-family: var(--mono) !important; font-size: 0.8rem !important; padding: 1.25rem !important; background: transparent !important; line-height: 1.65 !important; }
-
-    /* Design decisions */
-    .decisions-list { display: flex; flex-direction: column; gap: 0; }
-    .decision-item { display: grid; grid-template-columns: 180px 1fr; gap: 0; border: 1px solid var(--border); border-bottom: none; }
-    .decision-item:last-child { border-bottom: 1px solid var(--border); }
-    .decision-label { padding: 1rem 1.25rem; background: var(--bg-elevated); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); border-right: 1px solid var(--border); display: flex; align-items: center; }
-    .decision-text { padding: 1rem 1.25rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; background: var(--bg-card); }
-
-    /* Outcomes */
-    .outcomes-list { display: flex; flex-direction: column; gap: 0.75rem; }
-    .outcome-item { display: flex; gap: 1rem; align-items: flex-start; padding: 1rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border); border-left: 2px solid var(--accent); }
-    .outcome-bullet { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); margin-top: 0.15rem; flex-shrink: 0; }
-    .outcome-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
-
-    .stack-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
-    .stack-item { background: var(--bg-card); border: 1px solid var(--border); padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.3rem; }
-    .stack-name { font-family: var(--mono); font-size: 0.8rem; color: var(--text); }
-    .stack-role { font-size: 0.75rem; color: var(--text-dim); }
-
-    .footer-cta { display: flex; gap: 1rem; flex-wrap: wrap; padding-top: 3rem; border-top: 1px solid var(--border); }
-    .btn { font-family: var(--mono); font-size: 0.75rem; padding: 0.7rem 1.5rem; text-decoration: none; letter-spacing: 0.05em; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
-    .btn-primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-secondary { background: transparent; color: var(--text-muted); border: 1px solid var(--border-light); }
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-play { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); }
-    .btn-play:hover { background: var(--accent); color: #fff; }
-
-    @media (max-width: 640px) {
-      nav { padding: 0 1.25rem; }
-      .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; }
-      .overview-grid { grid-template-columns: 1fr; }
-      .systems-grid { grid-template-columns: 1fr; }
-      .decision-item { grid-template-columns: 1fr; }
-      .stack-list { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+  <link rel="stylesheet" href="../style.css"/>
 </head>
 <body>
 
-  <nav>
-    <a href="../index.html" class="nav-logo">khalil<span>.</span>dev</a>
-    <a href="../index.html#projects" class="nav-back">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12L6 8l4-4"/></svg>
-      Back to projects
-    </a>
-  </nav>
+<nav>
+  <a href="../index.html" class="nav-logo">K<span>.</span>Y</a>
+  <a href="../index.html#projects" class="nav-back">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12L6 8l4-4"/></svg>
+    Back to projects
+  </a>
+</nav>
 
-  <div class="hero">
-    <div class="hero-label">02 — Personal</div>
-    <h1>Browser Games<br>— Terry Torry</h1>
-    <p class="hero-desc">
-      Single-file territory conquest game in vanilla JS. A grid-based world where you expand your territory
-      against a random-walk AI, with a full particle system — zero frameworks, zero dependencies.
-    </p>
-    <div class="tags">
-      <span class="tag">JavaScript</span>
-      <span class="tag">HTML Canvas</span>
-      <span class="tag">Game Design</span>
-      <span class="tag">Vanilla JS</span>
-      <span class="tag">Zero Frameworks</span>
-    </div>
-    <div class="hero-meta">
-      <div class="meta-item">
-        <div class="meta-label">Type</div>
-        <div class="meta-value">Personal Project</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">File size</div>
-        <div class="meta-value">1 HTML file</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">Dependencies</div>
-        <div class="meta-value">None</div>
-      </div>
+<div class="page-hero">
+  <div class="page-label">02 — Personal</div>
+  <h1>Browser Games<br>— Terry Torry</h1>
+  <p class="page-desc">Single-file territory conquest game in vanilla JS. A grid-based world where you expand your territory against a random-walk AI, with a full particle system — zero frameworks, zero dependencies.</p>
+  <div class="project-tags" style="margin-bottom:2rem">
+    <span class="project-tag">JavaScript</span>
+    <span class="project-tag">HTML Canvas</span>
+    <span class="project-tag">Game Design</span>
+    <span class="project-tag">Vanilla JS</span>
+    <span class="project-tag">Zero Frameworks</span>
+  </div>
+  <div class="page-meta">
+    <div><div class="meta-label">Type</div><div class="meta-value">Personal Project</div></div>
+    <div><div class="meta-label">File size</div><div class="meta-value">1 HTML file</div></div>
+    <div><div class="meta-label">Dependencies</div><div class="meta-value">None</div></div>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">01</span><span class="proj-section-title">Overview</span><div class="proj-section-line"></div></div>
+    <div class="proj-grid">
+      <div class="proj-cell full"><div class="cell-label">Concept</div><div class="cell-text">Terry Torry is a browser-based territory game where the player and AI opponents compete to claim cells on a grid. The entire game — logic, rendering, AI, particles — lives in a single HTML file with no build step required.</div></div>
+      <div class="proj-cell"><div class="cell-label">Gameplay</div><div class="cell-text">Move your cursor to paint territory across the grid. Enemies do the same from their starting corners. The game ends after 2 minutes — highest territory count wins.</div></div>
+      <div class="proj-cell"><div class="cell-label">Philosophy</div><div class="cell-text">Built as a deliberate constraint exercise: no npm, no bundler, no library. Everything from first principles using the Canvas 2D API and raw JS.</div></div>
     </div>
   </div>
 
-  <div class="content">
-
-    <!-- OVERVIEW -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">01</span>
-        <span class="section-title">Overview</span>
-        <div class="section-line"></div>
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">02</span><span class="proj-section-title">Live Preview</span><div class="proj-section-line"></div></div>
+    <div class="game-preview">
+      <div class="game-preview-header">
+        <span class="game-preview-title">terry-torry.html — live</span>
+        <span class="game-preview-badge">● PLAYABLE</span>
       </div>
-      <div class="overview-grid">
-        <div class="overview-cell full">
-          <div class="cell-label">Concept</div>
-          <div class="cell-text">
-            Terry Torry is a browser-based territory game where the player and an AI opponent compete to claim cells on a grid. 
-            The AI uses a random-walk algorithm with territory-biased decision making. 
-            The entire game — logic, rendering, AI, particles — lives in a single HTML file with no build step required.
-          </div>
-        </div>
-        <div class="overview-cell">
-          <div class="cell-label">Gameplay</div>
-          <div class="cell-text">
-            Expand from your starting position by moving into adjacent cells. The AI does the same from the opposite corner. 
-            The game ends when all cells are claimed — highest territory count wins.
-          </div>
-        </div>
-        <div class="overview-cell">
-          <div class="cell-label">Philosophy</div>
-          <div class="cell-text">
-            Built as a deliberate constraint exercise: no npm, no bundler, no library. 
-            Everything implemented from first principles using the Canvas 2D API and raw JS. 
-            A proof that browser APIs alone are enough for polished interactive experiences.
-          </div>
-        </div>
-      </div>
+      <iframe src="../games/terry-torry.html" width="100%" height="480" style="display:block;border:none;" title="Terry Torry Game"></iframe>
     </div>
+  </div>
 
-    <!-- LIVE PREVIEW -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">02</span>
-        <span class="section-title">Live Preview</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="game-preview">
-        <div class="game-preview-header">
-          <span class="game-preview-title">terry-torry.html — live</span>
-          <span class="game-preview-badge">● PLAYABLE</span>
-        </div>
-        <iframe
-          src="../games/territory-game.html"
-          width="100%"
-          height="480"
-          style="display:block; border:none;"
-          title="Terry Torry Game"
-        ></iframe>
-      </div>
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">03</span><span class="proj-section-title">Game Systems</span><div class="proj-section-line"></div></div>
+    <div class="proj-cards">
+      <div class="proj-card"><div class="proj-card-icon">🗺️</div><div class="proj-card-title">Territory Grid</div><div class="proj-card-desc">NxN cell grid with ownership state per cell. Rendered via Canvas 2D with per-cell color based on ownership.</div></div>
+      <div class="proj-card"><div class="proj-card-icon">🤖</div><div class="proj-card-title">Random Walk AI</div><div class="proj-card-desc">AI uses weighted random walk: neutral cells have higher weight, already-owned territory has lower weight. Creates organic-feeling expansion.</div></div>
+      <div class="proj-card"><div class="proj-card-icon">✨</div><div class="proj-card-title">Particle System</div><div class="proj-card-desc">Each cell claim spawns a burst of particles with velocity, decay, and color inherited from the claimer. Pooled to avoid GC pressure.</div></div>
+      <div class="proj-card"><div class="proj-card-icon">⏱️</div><div class="proj-card-title">Game Loop</div><div class="proj-card-desc">requestAnimationFrame loop with fixed-timestep logic update and variable-rate rendering. Delta-time smoothing for consistent speed.</div></div>
     </div>
+  </div>
 
-    <!-- SYSTEMS -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">03</span>
-        <span class="section-title">Game Systems</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="systems-grid">
-        <div class="system-card">
-          <div class="system-icon">🗺️</div>
-          <div class="system-name">Territory Grid</div>
-          <div class="system-desc">NxN cell grid with ownership state per cell. Rendered via Canvas 2D with per-cell color interpolation based on ownership ratio.</div>
-        </div>
-        <div class="system-card">
-          <div class="system-icon">🤖</div>
-          <div class="system-name">Random Walk AI</div>
-          <div class="system-desc">AI uses weighted random walk: neutral cells have higher weight, already-owned territory has lower weight. Creates organic-feeling expansion.</div>
-        </div>
-        <div class="system-card">
-          <div class="system-icon">✨</div>
-          <div class="system-name">Particle System</div>
-          <div class="system-desc">Each cell claim spawns a burst of particles with velocity, decay, and color inherited from the claimer. Pooled to avoid GC pressure.</div>
-        </div>
-        <div class="system-card">
-          <div class="system-icon">🎮</div>
-          <div class="system-name">Input Handler</div>
-          <div class="system-desc">Keyboard (WASD/arrows) and mouse click support. Input is decoupled from the game loop via event queuing.</div>
-        </div>
-        <div class="system-card">
-          <div class="system-icon">⏱️</div>
-          <div class="system-name">Game Loop</div>
-          <div class="system-desc">requestAnimationFrame loop with fixed-timestep logic update and variable-rate rendering. Delta-time smoothing for consistent speed.</div>
-        </div>
-        <div class="system-card">
-          <div class="system-icon">📊</div>
-          <div class="system-name">Score & State</div>
-          <div class="system-desc">Live territory percentage HUD. Win/lose detection triggers a particle explosion and end-screen overlay, both drawn on canvas.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CODE -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">04</span>
-        <span class="section-title">Code Highlights</span>
-        <div class="section-line"></div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-filename">terry-torry.html — Particle System</span>
-          <span class="code-lang">JavaScript</span>
-        </div>
-        <pre><code class="language-javascript">// Particle pool — reuse objects to avoid GC spikes
-const POOL_SIZE = 300;
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">04</span><span class="proj-section-title">Code Highlights</span><div class="proj-section-line"></div></div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-filename">Particle System</span><span class="code-lang">JavaScript</span></div>
+      <pre><code class="language-javascript">const POOL_SIZE = 300;
 const pool = Array.from({ length: POOL_SIZE }, () => ({ active: false }));
 
 function spawnParticles(x, y, color) {
   let spawned = 0;
   for (const p of pool) {
     if (p.active) continue;
-    p.active = true;
-    p.x = x; p.y = y;
+    p.active = true; p.x = x; p.y = y;
     p.vx = (Math.random() - 0.5) * 4;
     p.vy = (Math.random() - 0.5) * 4;
-    p.alpha = 1;
+    p.alpha = 1; p.color = color;
     p.decay = 0.03 + Math.random() * 0.04;
-    p.color = color;
     if (++spawned >= 12) break;
   }
-}
-
-function updateParticles() {
-  for (const p of pool) {
-    if (!p.active) continue;
-    p.x += p.vx; p.y += p.vy;
-    p.alpha -= p.decay;
-    if (p.alpha <= 0) p.active = false;
-  }
 }</code></pre>
-      </div>
-
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-filename">terry-torry.html — AI Random Walk</span>
-          <span class="code-lang">JavaScript</span>
-        </div>
-        <pre><code class="language-javascript">// Weighted random walk: prefer unclaimed cells
-function aiMove(ai) {
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-filename">AI Random Walk</span><span class="code-lang">JavaScript</span></div>
+      <pre><code class="language-javascript">function aiMove(ai) {
   const neighbors = getNeighbors(ai.x, ai.y);
   const weights = neighbors.map(([nx, ny]) => {
     const cell = grid[ny][nx];
-    if (cell.owner === ai.id) return 0.05;   // already owned
-    if (cell.owner === null)  return 1.0;    // unclaimed — preferred
-    return 0.3;                              // opponent — risky
+    if (cell.owner === ai.id) return 0.05;
+    if (cell.owner === null)  return 1.0;
+    return 0.3;
   });
-
   const total = weights.reduce((a, b) => a + b, 0);
   let r = Math.random() * total;
   for (let i = 0; i < neighbors.length; i++) {
     r -= weights[i];
-    if (r <= 0) {
-      const [nx, ny] = neighbors[i];
-      claimCell(nx, ny, ai.id);
-      ai.x = nx; ai.y = ny;
-      return;
-    }
+    if (r <= 0) { claimCell(...neighbors[i], ai); return; }
   }
 }</code></pre>
-      </div>
-
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-filename">terry-torry.html — Game Loop</span>
-          <span class="code-lang">JavaScript</span>
-        </div>
-        <pre><code class="language-javascript">// Fixed timestep with delta-time accumulator
-const TICK_MS = 100; // AI moves every 100ms
-let accumulator = 0;
-let lastTime = 0;
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-filename">Game Loop</span><span class="code-lang">JavaScript</span></div>
+      <pre><code class="language-javascript">const TICK_MS = 100;
+let accumulator = 0, lastTime = 0;
 
 function loop(timestamp) {
-  const dt = timestamp - lastTime;
-  lastTime = timestamp;
+  const dt = timestamp - lastTime; lastTime = timestamp;
   accumulator += dt;
-
   while (accumulator >= TICK_MS) {
-    if (!gameOver) {
-      aiMove(aiPlayer);
-      checkWinCondition();
-    }
+    if (!gameOver) { aiMove(aiPlayer); checkWinCondition(); }
     accumulator -= TICK_MS;
   }
-
   render();
   requestAnimationFrame(loop);
-}
-
-requestAnimationFrame(ts => { lastTime = ts; loop(ts); });</code></pre>
-      </div>
+}</code></pre>
     </div>
-
-    <!-- DESIGN DECISIONS -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">05</span>
-        <span class="section-title">Design Decisions</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="decisions-list">
-        <div class="decision-item">
-          <div class="decision-label">Single file</div>
-          <div class="decision-text">All HTML, CSS, and JS in one file. No build step, no server needed — drag the file into a browser and play. Portability was a hard constraint.</div>
-        </div>
-        <div class="decision-item">
-          <div class="decision-label">Canvas over DOM</div>
-          <div class="decision-text">Using the Canvas 2D API for rendering instead of DOM manipulation allows full frame control and makes particle effects trivial to implement without layout reflows.</div>
-        </div>
-        <div class="decision-item">
-          <div class="decision-label">Object pool</div>
-          <div class="decision-text">Particles are pooled rather than allocated per-spawn. At 60fps with frequent claims, GC pauses from continuous allocation would cause visible stutters.</div>
-        </div>
-        <div class="decision-item">
-          <div class="decision-label">Fixed AI tick</div>
-          <div class="decision-text">The AI moves on a fixed 100ms timer decoupled from the render loop. This keeps AI speed consistent regardless of frame rate and makes difficulty tuning trivial.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- OUTCOMES -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">06</span>
-        <span class="section-title">Outcomes</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="outcomes-list">
-        <div class="outcome-item">
-          <span class="outcome-bullet">→</span>
-          <span class="outcome-text">Fully playable game in a single &lt;100KB HTML file. Runs in any modern browser with no installation or network dependency.</span>
-        </div>
-        <div class="outcome-item">
-          <span class="outcome-bullet">→</span>
-          <span class="outcome-text">Particle system maintains 60fps without GC stutters using object pooling — tested on Chrome, Firefox, and Safari.</span>
-        </div>
-        <div class="outcome-item">
-          <span class="outcome-bullet">→</span>
-          <span class="outcome-text">Demonstrated that game-dev concepts (game loop, AI, particles, collision) can be implemented cleanly without any game engine or framework.</span>
-        </div>
-        <div class="outcome-item">
-          <span class="outcome-bullet">→</span>
-          <span class="outcome-text">Collaborative development process with AI assistance for algorithmic refinement — a personal experiment in human–AI pair programming for creative projects.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- STACK -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">07</span>
-        <span class="section-title">Stack</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="stack-list">
-        <div class="stack-item">
-          <span class="stack-name">HTML5 Canvas</span>
-          <span class="stack-role">Rendering</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">Vanilla JS</span>
-          <span class="stack-role">Everything</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">requestAnimationFrame</span>
-          <span class="stack-role">Game loop</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">CSS (inline)</span>
-          <span class="stack-role">UI overlays</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">0 dependencies</span>
-          <span class="stack-role">By design</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">VS Code</span>
-          <span class="stack-role">Editor</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER CTA -->
-    <div class="footer-cta">
-      <a href="../games/terry-torry.html" class="btn btn-play">▶ Play Terry Torry</a>
-      <a href="https://github.com/yourusername/terry-torry" target="_blank" class="btn btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        View on GitHub
-      </a>
-      <a href="../index.html#projects" class="btn btn-secondary">← Back to Portfolio</a>
-    </div>
-
   </div>
 
-  <script>hljs.highlightAll();</script>
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">05</span><span class="proj-section-title">Design Decisions</span><div class="proj-section-line"></div></div>
+    <div class="decisions">
+      <div class="decision"><div class="decision-label">Single file</div><div class="decision-text">All HTML, CSS, and JS in one file. No build step, no server needed — drag into a browser and play.</div></div>
+      <div class="decision"><div class="decision-label">Canvas over DOM</div><div class="decision-text">Canvas 2D API for rendering allows full frame control and makes particle effects trivial to implement without layout reflows.</div></div>
+      <div class="decision"><div class="decision-label">Object pool</div><div class="decision-text">Particles are pooled rather than allocated per-spawn. At 60fps with frequent claims, GC pauses from continuous allocation cause visible stutters.</div></div>
+      <div class="decision"><div class="decision-label">Fixed AI tick</div><div class="decision-text">The AI moves on a fixed timer decoupled from the render loop. AI speed stays consistent regardless of frame rate.</div></div>
+    </div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">06</span><span class="proj-section-title">Outcomes</span><div class="proj-section-line"></div></div>
+    <div class="outcomes">
+      <div class="outcome"><span class="outcome-bullet">→</span><span class="outcome-text">Fully playable game in a single HTML file. Runs in any modern browser with no installation.</span></div>
+      <div class="outcome"><span class="outcome-bullet">→</span><span class="outcome-text">Particle system maintains 60fps without GC stutters using object pooling — tested on Chrome, Firefox, and Safari.</span></div>
+      <div class="outcome"><span class="outcome-bullet">→</span><span class="outcome-text">Demonstrated that game-dev concepts (game loop, AI, particles) can be implemented cleanly without any engine.</span></div>
+      <div class="outcome"><span class="outcome-bullet">→</span><span class="outcome-text">Collaborative human–AI pair programming experiment — algorithmic refinement done in collaboration with Claude.</span></div>
+    </div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">07</span><span class="proj-section-title">Stack</span><div class="proj-section-line"></div></div>
+    <div class="stack-grid">
+      <div class="stack-item"><span class="stack-name">HTML5 Canvas</span><span class="stack-role">Rendering</span></div>
+      <div class="stack-item"><span class="stack-name">Vanilla JS</span><span class="stack-role">Everything</span></div>
+      <div class="stack-item"><span class="stack-name">requestAnimationFrame</span><span class="stack-role">Game loop</span></div>
+      <div class="stack-item"><span class="stack-name">CSS (inline)</span><span class="stack-role">UI overlays</span></div>
+      <div class="stack-item"><span class="stack-name">0 dependencies</span><span class="stack-role">By design</span></div>
+      <div class="stack-item"><span class="stack-name">VS Code</span><span class="stack-role">Editor</span></div>
+    </div>
+  </div>
+
+  <div class="page-footer-cta">
+    <a href="../games/terry-torry.html" class="btn btn-primary">▶ Play Terry Torry</a>
+    <a href="https://github.com/khalil-yahyaoui-015/terry-torry" target="_blank" class="btn-secondary-outline">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+    <a href="../index.html#projects" class="btn-secondary-outline">← Back to Portfolio</a>
+  </div>
+
+</div>
+<script>hljs.highlightAll();</script>
 </body>
 </html>

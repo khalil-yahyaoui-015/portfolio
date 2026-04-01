@@ -1,239 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>On-Demand PC Service App — Khalil</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="../style.css"/>
 </head>
-
 <body>
-  <nav>
-    <a href="../index.html" class="nav-logo">khalil<span>.</span>dev</a>
-    <a href="../index.html#projects" class="nav-back">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M10 12L6 8l4-4"/>
-      </svg>
-      Back to projects
-    </a>
-  </nav>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-label">01 — Academic · SEG2505</div>
-    <h1>On-Demand PC<br>Service App</h1>
-    <p class="hero-desc">
-      Android application for managing custom PC build orders — built by a team of 5,
-      featuring multi-role authentication, real-time inventory, and a full order
-      processing workflow backed by Firebase.
-    </p>
-    <div class="tags">
-      <span class="tag">Android Studio</span>
-      <span class="tag">Java</span>
-      <span class="tag">Firebase</span>
-      <span class="tag">UML</span>
-      <span class="tag">Team of 5</span>
+<nav>
+  <a href="../index.html" class="nav-logo">K<span>.</span>Y</a>
+  <a href="../index.html#projects" class="nav-back">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12L6 8l4-4"/></svg>
+    Back to projects
+  </a>
+</nav>
+
+<div class="page-hero">
+  <div class="page-label">01 — Academic · SEG2505</div>
+  <h1>On-Demand PC<br>Service App</h1>
+  <p class="page-desc">Android application for managing custom PC build orders — built by a team of 5, featuring multi-role authentication, real-time inventory, and a full order processing workflow backed by Firebase.</p>
+  <div class="project-tags" style="margin-bottom:2rem">
+    <span class="project-tag">Android Studio</span>
+    <span class="project-tag">Java</span>
+    <span class="project-tag">Firebase</span>
+    <span class="project-tag">UML</span>
+    <span class="project-tag">Team of 5</span>
+  </div>
+  <div class="page-meta">
+    <div><div class="meta-label">Course</div><div class="meta-value">SEG2505 — Software Engineering</div></div>
+    <div><div class="meta-label">Type</div><div class="meta-value">Academic Group Project</div></div>
+    <div><div class="meta-label">Platform</div><div class="meta-value">Android (Java)</div></div>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">01</span><span class="proj-section-title">Overview</span><div class="proj-section-line"></div></div>
+    <div class="proj-grid">
+      <div class="proj-cell full"><div class="cell-label">Context</div><div class="cell-text">Developed as the final project for SEG2505 at the University of Ottawa. Applied software engineering principles end-to-end: requirements gathering, UML modeling, agile iteration, and Android implementation with a live backend.</div></div>
+      <div class="proj-cell"><div class="cell-label">Problem</div><div class="cell-text">PC repair shops manage orders across multiple staff roles with no unified system — leading to inventory mismatches, unclear order status, and manual handoffs.</div></div>
+      <div class="proj-cell"><div class="cell-label">Solution</div><div class="cell-text">A role-based Android app where each actor sees only their relevant interface. Orders flow through defined states; inventory updates in real time via Firebase Firestore.</div></div>
     </div>
-    <div class="hero-meta">
-      <div class="meta-item">
-        <div class="meta-label">Course</div>
-        <div class="meta-value">SEG2505 — Software Engineering</div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">02</span><span class="proj-section-title">Role System</span><div class="proj-section-line"></div></div>
+    <div class="proj-cards">
+      <div class="proj-card"><div class="proj-card-icon">🛡️</div><div class="proj-card-title">Administrator</div><div class="proj-card-desc">Full system access. Manages users, monitors all orders, resolves conflicts. Can override any order state.</div></div>
+      <div class="proj-card"><div class="proj-card-icon">📦</div><div class="proj-card-title">StoreKeeper</div><div class="proj-card-desc">Manages inventory. Approves or rejects part requests. Updates component availability in real time.</div></div>
+      <div class="proj-card"><div class="proj-card-icon">🔧</div><div class="proj-card-title">Assembler</div><div class="proj-card-desc">Receives assembly tasks. Marks progress, requests parts, and updates build status through the workflow.</div></div>
+      <div class="proj-card"><div class="proj-card-icon">🖥️</div><div class="proj-card-title">Requester</div><div class="proj-card-desc">Submits custom PC build orders. Tracks order status and communicates requirements through the app.</div></div>
+    </div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">03</span><span class="proj-section-title">Architecture</span><div class="proj-section-line"></div></div>
+    <div class="arch-diagram">
+      <div class="arch-layer">
+        <div class="arch-layer-label">UI</div>
+        <div class="arch-layer-boxes">
+          <div class="arch-box hl">LoginActivity</div><span class="arch-arrow">→</span>
+          <div class="arch-box hl">AdminDashboard</div><span class="arch-arrow">→</span>
+          <div class="arch-box hl">OrderActivity</div><span class="arch-arrow">→</span>
+          <div class="arch-box hl">InventoryActivity</div>
+        </div>
       </div>
-      <div class="meta-item">
-        <div class="meta-label">Type</div>
-        <div class="meta-value">Academic Group Project</div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Logic</div>
+        <div class="arch-layer-boxes">
+          <div class="arch-box">AuthManager</div><span class="arch-arrow">→</span>
+          <div class="arch-box">OrderController</div><span class="arch-arrow">→</span>
+          <div class="arch-box">InventoryManager</div><span class="arch-arrow">→</span>
+          <div class="arch-box">RoleRouter</div>
+        </div>
       </div>
-      <div class="meta-item">
-        <div class="meta-label">Platform</div>
-        <div class="meta-value">Android (Java)</div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Data</div>
+        <div class="arch-layer-boxes">
+          <div class="arch-box hl">Firebase Auth</div><span class="arch-arrow">→</span>
+          <div class="arch-box hl">Firestore (orders)</div><span class="arch-arrow">→</span>
+          <div class="arch-box hl">Firestore (inventory)</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="content">
-
-    <!-- OVERVIEW -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">01</span>
-        <span class="section-title">Overview</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="overview-grid">
-        <div class="overview-cell full">
-          <div class="cell-label">Context</div>
-          <div class="cell-text">
-            Developed as the final project for SEG2505 (Introduction to Software Engineering) at the University of Ottawa. The goal was to apply software engineering principles end-to-end: requirements gathering, UML modeling, agile iteration, and Android implementation with a live backend.
-          </div>
-        </div>
-        <div class="overview-cell">
-          <div class="cell-label">Problem</div>
-          <div class="cell-text">
-            PC repair shops manage orders across multiple staff roles with no unified system — leading to inventory mismatches, unclear order status, and manual handoffs between assemblers and storekeepers.
-          </div>
-        </div>
-        <div class="overview-cell">
-          <div class="cell-label">Solution</div>
-          <div class="cell-text">
-            A role-based Android app where each actor (Administrator, StoreKeeper, Assembler, Requester) sees only their relevant interface. Orders flow through defined states; inventory updates in real time via Firebase Firestore.
-          </div>
-        </div>
-      </div>
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">04</span><span class="proj-section-title">UML Design</span><div class="proj-section-line"></div></div>
+    <div class="proj-grid">
+      <div class="proj-cell"><div class="cell-label">Class Diagram</div><div class="cell-text">Models all entities: User (abstract), Order, Component, Inventory — with inheritance per role subclass.</div></div>
+      <div class="proj-cell"><div class="cell-label">State Diagram</div><div class="cell-text">Order lifecycle: <code style="font-family:var(--font-mono);font-size:0.78rem;color:var(--accent)">PENDING → APPROVED → IN_PROGRESS → ASSEMBLED → DELIVERED</code></div></div>
+      <div class="proj-cell"><div class="cell-label">Sequence Diagram</div><div class="cell-text">Full request flow — Requester submits, StoreKeeper validates inventory, Assembler picks up the build.</div></div>
+      <div class="proj-cell"><div class="cell-label">Activity Diagram</div><div class="cell-text">Parallel swim-lanes for each role showing concurrent activities during an active order.</div></div>
     </div>
+  </div>
 
-    <!-- ROLES -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">02</span>
-        <span class="section-title">Role System</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="roles-grid">
-        <div class="role-card">
-          <div class="role-icon">🛡️</div>
-          <div class="role-name">Administrator</div>
-          <div class="role-desc">Full system access. Manages users, monitors all orders, resolves conflicts. Can override any order state.</div>
-        </div>
-        <div class="role-card">
-          <div class="role-icon">📦</div>
-          <div class="role-name">StoreKeeper</div>
-          <div class="role-desc">Manages inventory. Approves or rejects part requests. Updates component availability in real time.</div>
-        </div>
-        <div class="role-card">
-          <div class="role-icon">🔧</div>
-          <div class="role-name">Assembler</div>
-          <div class="role-desc">Receives assembly tasks. Marks progress, requests parts, and updates build status through the workflow.</div>
-        </div>
-        <div class="role-card">
-          <div class="role-icon">🖥️</div>
-          <div class="role-name">Requester</div>
-          <div class="role-desc">Submits custom PC build orders. Tracks order status and communicates requirements through the app.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ARCHITECTURE -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">03</span>
-        <span class="section-title">Architecture</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="arch-diagram">
-        <div class="arch-layers">
-          <div class="arch-layer">
-            <div class="arch-layer-label">UI</div>
-            <div class="arch-layer-boxes">
-              <div class="arch-box highlight">LoginActivity</div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-box highlight">AdminDashboard</div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-box highlight">OrderActivity</div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-box highlight">InventoryActivity</div>
-            </div>
-          </div>
-          <div class="arch-layer">
-            <div class="arch-layer-label">Logic</div>
-            <div class="arch-layer-boxes">
-              <div class="arch-box">AuthManager</div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-box">OrderController</div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-box">InventoryManager</div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-box">RoleRouter</div>
-            </div>
-          </div>
-          <div class="arch-layer">
-            <div class="arch-layer-label">Data</div>
-            <div class="arch-layer-boxes">
-              <div class="arch-box highlight">Firebase Auth</div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-box highlight">Firestore (orders)</div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-box highlight">Firestore (inventory)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- UML -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">04</span>
-        <span class="section-title">UML Design</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="overview-grid">
-        <div class="overview-cell">
-          <div class="cell-label">Class Diagram</div>
-          <div class="cell-text">
-            Models all entities: User (abstract), Order, Component, Inventory — with inheritance for each role subclass and associations between Order and Component.
-          </div>
-        </div>
-        <div class="overview-cell">
-          <div class="cell-label">State Diagram</div>
-          <div class="cell-text">
-            Order lifecycle: <code style="font-family:var(--mono);font-size:0.78rem;color:var(--accent)">PENDING → APPROVED → IN_PROGRESS → ASSEMBLED → DELIVERED</code> with rejection/cancellation transitions.
-          </div>
-        </div>
-        <div class="overview-cell">
-          <div class="cell-label">Sequence Diagram</div>
-          <div class="cell-text">
-            Captures the full request flow — Requester submits, StoreKeeper validates inventory, Assembler picks up the build, Administrator oversees.
-          </div>
-        </div>
-        <div class="overview-cell">
-          <div class="cell-label">Activity Diagram</div>
-          <div class="cell-text">
-            Parallel swim-lanes for each role showing concurrent activities during an active order, including inventory reservation and assembly progress.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CODE -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">05</span>
-        <span class="section-title">Code Highlights</span>
-        <div class="section-line"></div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-filename">OrderController.java</span>
-          <span class="code-lang">Java</span>
-        </div>
-        <pre><code class="language-java">// Submit a new order and write to Firestore
-public void submitOrder(Order order, String requesterId) {
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">05</span><span class="proj-section-title">Code Highlights</span><div class="proj-section-line"></div></div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-filename">OrderController.java</span><span class="code-lang">Java</span></div>
+      <pre><code class="language-java">public void submitOrder(Order order, String requesterId) {
     order.setStatus(OrderStatus.PENDING);
     order.setRequesterId(requesterId);
     order.setTimestamp(System.currentTimeMillis());
-
     db.collection("orders")
         .add(order.toMap())
-        .addOnSuccessListener(ref -> {
-            order.setId(ref.getId());
-            notifyStoreKeepers(order);
-        })
+        .addOnSuccessListener(ref -> { order.setId(ref.getId()); notifyStoreKeepers(order); })
         .addOnFailureListener(e -> Log.e(TAG, "Order submit failed", e));
 }</code></pre>
-      </div>
-
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-filename">RoleRouter.java</span>
-          <span class="code-lang">Java</span>
-        </div>
-        <pre><code class="language-java">// Route authenticated user to role-specific dashboard
-public static void routeUser(Context ctx, String role) {
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-filename">RoleRouter.java</span><span class="code-lang">Java</span></div>
+      <pre><code class="language-java">public static void routeUser(Context ctx, String role) {
     Intent intent;
     switch (role) {
         case "ADMIN":       intent = new Intent(ctx, AdminActivity.class); break;
@@ -243,145 +126,85 @@ public static void routeUser(Context ctx, String role) {
     }
     ctx.startActivity(intent);
 }</code></pre>
-      </div>
-
-      <div class="code-block">
-        <div class="code-header">
-          <span class="code-filename">InventoryManager.java</span>
-          <span class="code-lang">Java</span>
-        </div>
-        <pre><code class="language-java">// Real-time inventory listener with Firestore snapshot
-public void listenToInventory(InventoryCallback callback) {
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-filename">InventoryManager.java</span><span class="code-lang">Java</span></div>
+      <pre><code class="language-java">public void listenToInventory(InventoryCallback callback) {
     db.collection("inventory")
         .whereEqualTo("available", true)
         .addSnapshotListener((snapshots, error) -> {
             if (error != null || snapshots == null) return;
             List&lt;Component&gt; items = new ArrayList&lt;&gt;();
-            for (QueryDocumentSnapshot doc : snapshots) {
+            for (QueryDocumentSnapshot doc : snapshots)
                 items.add(doc.toObject(Component.class));
-            }
             callback.onInventoryUpdated(items);
         });
 }</code></pre>
-      </div>
     </div>
-
-    <!-- SCREENSHOTS -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">06</span>
-        <span class="section-title">Screenshots</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="screenshot-grid">
-        <div>
-          <div class="screenshot">
-            <!-- Replace src with actual screenshot: <img src="../assets/pc-app/login.png" alt="Login screen"> -->
-            <span class="screenshot-icon">📱</span>
-            <span class="screenshot-label">Login Screen<br><span style="color:var(--text-dim)">Replace with screenshot</span></span>
-          </div>
-          <div class="screenshot-caption">Login & Role Auth</div>
-        </div>
-        <div>
-          <div class="screenshot">
-            <span class="screenshot-icon">📱</span>
-            <span class="screenshot-label">Order Dashboard<br><span style="color:var(--text-dim)">Replace with screenshot</span></span>
-          </div>
-          <div class="screenshot-caption">Order Dashboard</div>
-        </div>
-        <div>
-          <div class="screenshot">
-            <span class="screenshot-icon">📱</span>
-            <span class="screenshot-label">Inventory View<br><span style="color:var(--text-dim)">Replace with screenshot</span></span>
-          </div>
-          <div class="screenshot-caption">StoreKeeper — Inventory</div>
-        </div>
-        <div>
-          <div class="screenshot">
-            <span class="screenshot-icon">📱</span>
-            <span class="screenshot-label">Assembler View<br><span style="color:var(--text-dim)">Replace with screenshot</span></span>
-          </div>
-          <div class="screenshot-caption">Assembler — Build Queue</div>
-        </div>
-      </div>
-      <p style="margin-top:1rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim)">
-        → Add screenshots to <code>assets/pc-app/</code> and update the <code>img</code> src tags above.
-      </p>
-    </div>
-
-    <!-- OUTCOMES -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">07</span>
-        <span class="section-title">Outcomes</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="outcomes-list">
-        <div class="outcome-item">
-          <span class="outcome-bullet">→</span>
-          <span class="outcome-text">Delivered a fully functional Android app with live Firebase backend, tested across all 4 role types with no authentication bypass vulnerabilities.</span>
-        </div>
-        <div class="outcome-item">
-          <span class="outcome-bullet">→</span>
-          <span class="outcome-text">Produced complete UML documentation (4 diagram types) validated by the course instructor as correctly modeling the system behavior.</span>
-        </div>
-        <div class="outcome-item">
-          <span class="outcome-bullet">→</span>
-          <span class="outcome-text">Led coordination between 5 team members using GitHub for version control and weekly agile-style syncs to track progress against milestones.</span>
-        </div>
-        <div class="outcome-item">
-          <span class="outcome-bullet">→</span>
-          <span class="outcome-text">Real-time inventory sync via Firestore listeners eliminated the need for manual polling — state updates propagate instantly across all connected devices.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- STACK -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-num">08</span>
-        <span class="section-title">Stack</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="stack-list">
-        <div class="stack-item">
-          <span class="stack-name">Android Studio</span>
-          <span class="stack-role">IDE & Build</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">Java</span>
-          <span class="stack-role">Application logic</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">Firebase Auth</span>
-          <span class="stack-role">Authentication</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">Firestore</span>
-          <span class="stack-role">Real-time database</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">UML (draw.io)</span>
-          <span class="stack-role">System design</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-name">GitHub</span>
-          <span class="stack-role">Version control</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER CTA -->
-    <div class="footer-cta">
-      <a href="https://github.com/yourusername/pc-service-app" target="_blank" class="btn btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        View on GitHub
-      </a>
-      <a href="../index.html#projects" class="btn btn-secondary">← Back to Portfolio</a>
-    </div>
-
   </div>
 
-  <script>hljs.highlightAll();</script>
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">06</span><span class="proj-section-title">Screenshots</span><div class="proj-section-line"></div></div>
+    <div class="screenshot-grid">
+      <div>
+        <div class="screenshot">
+          <!-- <img src="../assets/img/pc-app/login.png" alt="Login"> -->
+          <span class="screenshot-icon">📱</span><span class="screenshot-label">Login Screen<br><span style="opacity:.4">assets/img/pc-app/login.png</span></span>
+        </div>
+        <div class="screenshot-caption">Login & Role Auth</div>
+      </div>
+      <div>
+        <div class="screenshot">
+          <span class="screenshot-icon">📱</span><span class="screenshot-label">Order Dashboard<br><span style="opacity:.4">assets/img/pc-app/dashboard.png</span></span>
+        </div>
+        <div class="screenshot-caption">Order Dashboard</div>
+      </div>
+      <div>
+        <div class="screenshot">
+          <span class="screenshot-icon">📱</span><span class="screenshot-label">Inventory View<br><span style="opacity:.4">assets/img/pc-app/inventory.png</span></span>
+        </div>
+        <div class="screenshot-caption">StoreKeeper — Inventory</div>
+      </div>
+      <div>
+        <div class="screenshot">
+          <span class="screenshot-icon">📱</span><span class="screenshot-label">Assembler View<br><span style="opacity:.4">assets/img/pc-app/assembler.png</span></span>
+        </div>
+        <div class="screenshot-caption">Assembler — Build Queue</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">07</span><span class="proj-section-title">Outcomes</span><div class="proj-section-line"></div></div>
+    <div class="outcomes">
+      <div class="outcome"><span class="outcome-bullet">→</span><span class="outcome-text">Fully functional Android app with live Firebase backend, tested across all 4 role types.</span></div>
+      <div class="outcome"><span class="outcome-bullet">→</span><span class="outcome-text">Complete UML documentation (4 diagram types) validated by the course instructor.</span></div>
+      <div class="outcome"><span class="outcome-bullet">→</span><span class="outcome-text">Coordinated 5-person team using GitHub for version control and agile-style weekly syncs.</span></div>
+      <div class="outcome"><span class="outcome-bullet">→</span><span class="outcome-text">Real-time inventory sync via Firestore listeners — state updates propagate instantly across all devices.</span></div>
+    </div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-header"><span class="proj-section-num">08</span><span class="proj-section-title">Stack</span><div class="proj-section-line"></div></div>
+    <div class="stack-grid">
+      <div class="stack-item"><span class="stack-name">Android Studio</span><span class="stack-role">IDE & Build</span></div>
+      <div class="stack-item"><span class="stack-name">Java</span><span class="stack-role">Application logic</span></div>
+      <div class="stack-item"><span class="stack-name">Firebase Auth</span><span class="stack-role">Authentication</span></div>
+      <div class="stack-item"><span class="stack-name">Firestore</span><span class="stack-role">Real-time database</span></div>
+      <div class="stack-item"><span class="stack-name">UML (draw.io)</span><span class="stack-role">System design</span></div>
+      <div class="stack-item"><span class="stack-name">GitHub</span><span class="stack-role">Version control</span></div>
+    </div>
+  </div>
+
+  <div class="page-footer-cta">
+    <a href="https://github.com/khalil-yahyaoui-015" target="_blank" class="btn btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+    <a href="../index.html#projects" class="btn-secondary-outline">← Back to Portfolio</a>
+  </div>
+
+</div>
+<script>hljs.highlightAll();</script>
 </body>
 </html>
