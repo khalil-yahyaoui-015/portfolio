@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>On-Demand PC Service App — Khalil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #111118;
+      --bg-elevated: #16161f;
+      --border: #1e1e2e;
+      --border-light: #2a2a3e;
+      --accent: #7c6af7;
+      --accent-dim: rgba(124, 106, 247, 0.15);
+      --accent-glow: rgba(124, 106, 247, 0.08);
+      --green: #4ade80;
+      --text: #e2e2ee;
+      --text-muted: #7a7a9a;
+      --text-dim: #4a4a6a;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 60px;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-back {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: var(--mono); font-size: 0.75rem;
+      color: var(--text-muted); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+    .nav-back svg { width: 14px; height: 14px; }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 120px 2.5rem 60px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 {
+      font-family: var(--mono);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+    }
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+    .tags {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .tag {
+      font-family: var(--mono); font-size: 0.7rem;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border-light);
+      color: var(--text-muted);
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+    .hero-meta {
+      display: flex; gap: 2.5rem; flex-wrap: wrap;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .meta-item {}
+    .meta-label {
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 0.3rem;
+    }
+    .meta-value {
+      font-size: 0.9rem; color: var(--text);
+    }
+
+    /* ─── LAYOUT ─── */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2.5rem 6rem;
+    }
+
+    /* ─── SECTIONS ─── */
+    .section {
+      margin-bottom: 4rem;
+    }
+    .section-header {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.8rem;
+    }
+    .section-num {
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--accent); letter-spacing: 0.1em;
+    }
+    .section-title {
+      font-family: var(--mono); font-size: 0.8rem;
+      color: var(--text); letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .section-line {
+      flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* ─── OVERVIEW ─── */
+    .overview-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .overview-cell {
+      background: var(--bg-card);
+      padding: 1.5rem;
+    }
+    .overview-cell.full { grid-column: 1 / -1; }
+    .cell-label {
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--text-dim); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 0.6rem;
+    }
+    .cell-text {
+      font-size: 0.9rem; color: var(--text-muted); line-height: 1.8;
+    }
+
+    /* ─── ROLES ─── */
+    .roles-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+    }
+    .role-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .role-card:hover {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .role-icon {
+      font-size: 1.4rem; margin-bottom: 0.8rem;
+    }
+    .role-name {
+      font-family: var(--mono); font-size: 0.8rem;
+      color: var(--accent); margin-bottom: 0.5rem;
+    }
+    .role-desc {
+      font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;
+    }
+
+    /* ─── ARCHITECTURE ─── */
+    .arch-diagram {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      font-family: var(--mono);
+    }
+    .arch-layers {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .arch-layer {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 0;
+      min-height: 60px;
+    }
+    .arch-layer-label {
+      display: flex; align-items: center;
+      font-size: 0.62rem; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      border-right: 1px solid var(--border);
+      padding-right: 1rem;
+      writing-mode: horizontal-tb;
+    }
+    .arch-layer-boxes {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px dashed var(--border);
+    }
+    .arch-box {
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--border-light);
+      font-size: 0.68rem; color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .arch-box.highlight {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .arch-arrow {
+      color: var(--text-dim); font-size: 0.75rem; flex-shrink: 0;
+    }
+
+    /* ─── CODE BLOCKS ─── */
+    .code-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.6rem 1rem;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .code-filename {
+      font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted);
+    }
+    .code-lang {
+      font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim);
+    }
+    .code-block pre {
+      margin: 0; overflow-x: auto;
+    }
+    .code-block pre code {
+      font-family: var(--mono) !important;
+      font-size: 0.8rem !important;
+      padding: 1.25rem !important;
+      background: transparent !important;
+      line-height: 1.65 !important;
+    }
+
+    /* ─── SCREENSHOT PLACEHOLDER ─── */
+    .screenshot-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .screenshot {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      aspect-ratio: 9/16;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .screenshot:hover { border-color: var(--accent); }
+    .screenshot-label {
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--text-dim); text-align: center;
+    }
+    .screenshot-icon { font-size: 1.5rem; }
+    .screenshot img {
+      width: 100%; height: 100%; object-fit: cover;
+      position: absolute; top: 0; left: 0;
+    }
+    .screenshot-caption {
+      margin-top: 0.5rem;
+      font-family: var(--mono); font-size: 0.65rem;
+      color: var(--text-dim); text-align: center;
+    }
+
+    /* ─── STACK ─── */
+    .stack-list {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;
+    }
+    .stack-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      display: flex; flex-direction: column; gap: 0.3rem;
+    }
+    .stack-name {
+      font-family: var(--mono); font-size: 0.8rem; color: var(--text);
+    }
+    .stack-role {
+      font-size: 0.75rem; color: var(--text-dim);
+    }
+
+    /* ─── OUTCOMES ─── */
+    .outcomes-list {
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .outcome-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--accent);
+    }
+    .outcome-bullet {
+      font-family: var(--mono); font-size: 0.7rem;
+      color: var(--accent); margin-top: 0.15rem; flex-shrink: 0;
+    }
+    .outcome-text {
+      font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;
+    }
+
+    /* ─── FOOTER CTA ─── */
+    .footer-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      padding-top: 3rem;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      font-family: var(--mono); font-size: 0.75rem;
+      padding: 0.7rem 1.5rem;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid var(--accent);
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border-light);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 1.25rem; }
+      .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .overview-grid { grid-template-columns: 1fr; }
+      .roles-grid { grid-template-columns: 1fr; }
+      .screenshot-grid { grid-template-columns: 1fr; }
+      .stack-list { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="../index.html" class="nav-logo">khalil<span>.</span>dev</a>
+    <a href="../index.html#projects" class="nav-back">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M10 12L6 8l4-4"/>
+      </svg>
+      Back to projects
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-label">01 — Academic · SEG2505</div>
+    <h1>On-Demand PC<br>Service App</h1>
+    <p class="hero-desc">
+      Android application for managing custom PC build orders — built by a team of 5,
+      featuring multi-role authentication, real-time inventory, and a full order
+      processing workflow backed by Firebase.
+    </p>
+    <div class="tags">
+      <span class="tag">Android Studio</span>
+      <span class="tag">Java</span>
+      <span class="tag">Firebase</span>
+      <span class="tag">UML</span>
+      <span class="tag">Team of 5</span>
+    </div>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Course</div>
+        <div class="meta-value">SEG2505 — Software Engineering</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Type</div>
+        <div class="meta-value">Academic Group Project</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Platform</div>
+        <div class="meta-value">Android (Java)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <span class="section-title">Overview</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="overview-grid">
+        <div class="overview-cell full">
+          <div class="cell-label">Context</div>
+          <div class="cell-text">
+            Developed as the final project for SEG2505 (Introduction to Software Engineering) at the University of Ottawa. The goal was to apply software engineering principles end-to-end: requirements gathering, UML modeling, agile iteration, and Android implementation with a live backend.
+          </div>
+        </div>
+        <div class="overview-cell">
+          <div class="cell-label">Problem</div>
+          <div class="cell-text">
+            PC repair shops manage orders across multiple staff roles with no unified system — leading to inventory mismatches, unclear order status, and manual handoffs between assemblers and storekeepers.
+          </div>
+        </div>
+        <div class="overview-cell">
+          <div class="cell-label">Solution</div>
+          <div class="cell-text">
+            A role-based Android app where each actor (Administrator, StoreKeeper, Assembler, Requester) sees only their relevant interface. Orders flow through defined states; inventory updates in real time via Firebase Firestore.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROLES -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <span class="section-title">Role System</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="roles-grid">
+        <div class="role-card">
+          <div class="role-icon">🛡️</div>
+          <div class="role-name">Administrator</div>
+          <div class="role-desc">Full system access. Manages users, monitors all orders, resolves conflicts. Can override any order state.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-icon">📦</div>
+          <div class="role-name">StoreKeeper</div>
+          <div class="role-desc">Manages inventory. Approves or rejects part requests. Updates component availability in real time.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-icon">🔧</div>
+          <div class="role-name">Assembler</div>
+          <div class="role-desc">Receives assembly tasks. Marks progress, requests parts, and updates build status through the workflow.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-icon">🖥️</div>
+          <div class="role-name">Requester</div>
+          <div class="role-desc">Submits custom PC build orders. Tracks order status and communicates requirements through the app.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <span class="section-title">Architecture</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="arch-diagram">
+        <div class="arch-layers">
+          <div class="arch-layer">
+            <div class="arch-layer-label">UI</div>
+            <div class="arch-layer-boxes">
+              <div class="arch-box highlight">LoginActivity</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box highlight">AdminDashboard</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box highlight">OrderActivity</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box highlight">InventoryActivity</div>
+            </div>
+          </div>
+          <div class="arch-layer">
+            <div class="arch-layer-label">Logic</div>
+            <div class="arch-layer-boxes">
+              <div class="arch-box">AuthManager</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box">OrderController</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box">InventoryManager</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box">RoleRouter</div>
+            </div>
+          </div>
+          <div class="arch-layer">
+            <div class="arch-layer-label">Data</div>
+            <div class="arch-layer-boxes">
+              <div class="arch-box highlight">Firebase Auth</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box highlight">Firestore (orders)</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box highlight">Firestore (inventory)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UML -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <span class="section-title">UML Design</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="overview-grid">
+        <div class="overview-cell">
+          <div class="cell-label">Class Diagram</div>
+          <div class="cell-text">
+            Models all entities: User (abstract), Order, Component, Inventory — with inheritance for each role subclass and associations between Order and Component.
+          </div>
+        </div>
+        <div class="overview-cell">
+          <div class="cell-label">State Diagram</div>
+          <div class="cell-text">
+            Order lifecycle: <code style="font-family:var(--mono);font-size:0.78rem;color:var(--accent)">PENDING → APPROVED → IN_PROGRESS → ASSEMBLED → DELIVERED</code> with rejection/cancellation transitions.
+          </div>
+        </div>
+        <div class="overview-cell">
+          <div class="cell-label">Sequence Diagram</div>
+          <div class="cell-text">
+            Captures the full request flow — Requester submits, StoreKeeper validates inventory, Assembler picks up the build, Administrator oversees.
+          </div>
+        </div>
+        <div class="overview-cell">
+          <div class="cell-label">Activity Diagram</div>
+          <div class="cell-text">
+            Parallel swim-lanes for each role showing concurrent activities during an active order, including inventory reservation and assembly progress.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CODE -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <span class="section-title">Code Highlights</span>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">OrderController.java</span>
+          <span class="code-lang">Java</span>
+        </div>
+        <pre><code class="language-java">// Submit a new order and write to Firestore
+public void submitOrder(Order order, String requesterId) {
+    order.setStatus(OrderStatus.PENDING);
+    order.setRequesterId(requesterId);
+    order.setTimestamp(System.currentTimeMillis());
+
+    db.collection("orders")
+        .add(order.toMap())
+        .addOnSuccessListener(ref -> {
+            order.setId(ref.getId());
+            notifyStoreKeepers(order);
+        })
+        .addOnFailureListener(e -> Log.e(TAG, "Order submit failed", e));
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">RoleRouter.java</span>
+          <span class="code-lang">Java</span>
+        </div>
+        <pre><code class="language-java">// Route authenticated user to role-specific dashboard
+public static void routeUser(Context ctx, String role) {
+    Intent intent;
+    switch (role) {
+        case "ADMIN":       intent = new Intent(ctx, AdminActivity.class); break;
+        case "STOREKEEPER": intent = new Intent(ctx, StoreKeeperActivity.class); break;
+        case "ASSEMBLER":   intent = new Intent(ctx, AssemblerActivity.class); break;
+        default:            intent = new Intent(ctx, RequesterActivity.class); break;
+    }
+    ctx.startActivity(intent);
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">InventoryManager.java</span>
+          <span class="code-lang">Java</span>
+        </div>
+        <pre><code class="language-java">// Real-time inventory listener with Firestore snapshot
+public void listenToInventory(InventoryCallback callback) {
+    db.collection("inventory")
+        .whereEqualTo("available", true)
+        .addSnapshotListener((snapshots, error) -> {
+            if (error != null || snapshots == null) return;
+            List&lt;Component&gt; items = new ArrayList&lt;&gt;();
+            for (QueryDocumentSnapshot doc : snapshots) {
+                items.add(doc.toObject(Component.class));
+            }
+            callback.onInventoryUpdated(items);
+        });
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SCREENSHOTS -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <span class="section-title">Screenshots</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="screenshot-grid">
+        <div>
+          <div class="screenshot">
+            <!-- Replace src with actual screenshot: <img src="../assets/pc-app/login.png" alt="Login screen"> -->
+            <span class="screenshot-icon">📱</span>
+            <span class="screenshot-label">Login Screen<br><span style="color:var(--text-dim)">Replace with screenshot</span></span>
+          </div>
+          <div class="screenshot-caption">Login & Role Auth</div>
+        </div>
+        <div>
+          <div class="screenshot">
+            <span class="screenshot-icon">📱</span>
+            <span class="screenshot-label">Order Dashboard<br><span style="color:var(--text-dim)">Replace with screenshot</span></span>
+          </div>
+          <div class="screenshot-caption">Order Dashboard</div>
+        </div>
+        <div>
+          <div class="screenshot">
+            <span class="screenshot-icon">📱</span>
+            <span class="screenshot-label">Inventory View<br><span style="color:var(--text-dim)">Replace with screenshot</span></span>
+          </div>
+          <div class="screenshot-caption">StoreKeeper — Inventory</div>
+        </div>
+        <div>
+          <div class="screenshot">
+            <span class="screenshot-icon">📱</span>
+            <span class="screenshot-label">Assembler View<br><span style="color:var(--text-dim)">Replace with screenshot</span></span>
+          </div>
+          <div class="screenshot-caption">Assembler — Build Queue</div>
+        </div>
+      </div>
+      <p style="margin-top:1rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim)">
+        → Add screenshots to <code>assets/pc-app/</code> and update the <code>img</code> src tags above.
+      </p>
+    </div>
+
+    <!-- OUTCOMES -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <span class="section-title">Outcomes</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="outcomes-list">
+        <div class="outcome-item">
+          <span class="outcome-bullet">→</span>
+          <span class="outcome-text">Delivered a fully functional Android app with live Firebase backend, tested across all 4 role types with no authentication bypass vulnerabilities.</span>
+        </div>
+        <div class="outcome-item">
+          <span class="outcome-bullet">→</span>
+          <span class="outcome-text">Produced complete UML documentation (4 diagram types) validated by the course instructor as correctly modeling the system behavior.</span>
+        </div>
+        <div class="outcome-item">
+          <span class="outcome-bullet">→</span>
+          <span class="outcome-text">Led coordination between 5 team members using GitHub for version control and weekly agile-style syncs to track progress against milestones.</span>
+        </div>
+        <div class="outcome-item">
+          <span class="outcome-bullet">→</span>
+          <span class="outcome-text">Real-time inventory sync via Firestore listeners eliminated the need for manual polling — state updates propagate instantly across all connected devices.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STACK -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <span class="section-title">Stack</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="stack-list">
+        <div class="stack-item">
+          <span class="stack-name">Android Studio</span>
+          <span class="stack-role">IDE & Build</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-name">Java</span>
+          <span class="stack-role">Application logic</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-name">Firebase Auth</span>
+          <span class="stack-role">Authentication</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-name">Firestore</span>
+          <span class="stack-role">Real-time database</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-name">UML (draw.io)</span>
+          <span class="stack-role">System design</span>
+        </div>
+        <div class="stack-item">
+          <span class="stack-name">GitHub</span>
+          <span class="stack-role">Version control</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER CTA -->
+    <div class="footer-cta">
+      <a href="https://github.com/yourusername/pc-service-app" target="_blank" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        View on GitHub
+      </a>
+      <a href="../index.html#projects" class="btn btn-secondary">← Back to Portfolio</a>
+    </div>
+
+  </div>
+
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

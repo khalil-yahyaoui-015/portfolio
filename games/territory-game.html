@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERRITO — Conquête de territoire</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --bg: #050810;
+    --grid: rgba(0,200,255,0.04);
+    --player: #00f5ff;
+    --player-glow: rgba(0,245,255,0.4);
+    --enemy1: #ff3366;
+    --enemy2: #ff9500;
+    --enemy3: #a855f7;
+    --ui-bg: rgba(5,8,16,0.85);
+    --ui-border: rgba(0,245,255,0.2);
+    --text: #e0f7ff;
+    --accent: #00f5ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  #gameCanvas {
+    display: block;
+    cursor: none;
+  }
+
+  #ui {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 24px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .ui-panel {
+    background: var(--ui-bg);
+    border: 1px solid var(--ui-border);
+    border-radius: 4px;
+    padding: 10px 16px;
+    backdrop-filter: blur(10px);
+  }
+
+  .stat-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0,245,255,0.5);
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--player-glow);
+  }
+
+  .stat-value.enemy {
+    color: var(--enemy1);
+    text-shadow: 0 0 20px rgba(255,51,102,0.4);
+  }
+
+  #centerUI {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 20;
+    pointer-events: all;
+  }
+
+  #startScreen, #gameOverScreen {
+    background: rgba(5,8,16,0.95);
+    border: 1px solid rgba(0,245,255,0.3);
+    border-radius: 8px;
+    padding: 40px 60px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 60px rgba(0,245,255,0.1), 0 0 120px rgba(0,245,255,0.05);
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    color: var(--accent);
+    text-shadow: 0 0 40px var(--player-glow), 0 0 80px rgba(0,245,255,0.2);
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: rgba(0,245,255,0.4);
+    margin-bottom: 32px;
+    text-transform: uppercase;
+  }
+
+  .instructions {
+    font-size: 12px;
+    line-height: 2;
+    color: rgba(224,247,255,0.6);
+    margin-bottom: 32px;
+    text-align: left;
+  }
+
+  .instructions span {
+    color: var(--accent);
+  }
+
+  button {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 14px 40px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s;
+    z-index: -1;
+  }
+
+  button:hover::before { transform: scaleX(1); }
+  button:hover { color: var(--bg); }
+
+  #progressBar {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .bar-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(0,245,255,0.4);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+    gap: 1px;
+  }
+
+  #playerBar {
+    height: 100%;
+    background: linear-gradient(90deg, #00c8ff, #00f5ff);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(0,245,255,0.6);
+  }
+
+  #enemy1Bar { height: 100%; background: var(--enemy1); transition: width 0.3s ease; }
+  #enemy2Bar { height: 100%; background: var(--enemy2); transition: width 0.3s ease; }
+  #enemy3Bar { height: 100%; background: var(--enemy3); transition: width 0.3s ease; }
+
+  .bar-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 9px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  #timerUI {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    color: rgba(0,245,255,0.5);
+    letter-spacing: 2px;
+  }
+
+  #gameOverScreen { display: none; }
+
+  .final-score {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 40px var(--player-glow);
+    margin: 16px 0;
+  }
+
+  .result-text {
+    font-size: 13px;
+    color: rgba(224,247,255,0.5);
+    margin-bottom: 28px;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="gameCanvas"></canvas>
+
+<div id="ui">
+  <div class="ui-panel">
+    <div class="stat-label">Territoire</div>
+    <div class="stat-value" id="playerScore">0%</div>
+  </div>
+  <div class="ui-panel" style="text-align:center">
+    <div class="stat-label">Temps restant</div>
+    <div id="timerUI">2:00</div>
+  </div>
+  <div class="ui-panel" style="text-align:right">
+    <div class="stat-label">Meilleur ennemi</div>
+    <div class="stat-value enemy" id="enemyScore">0%</div>
+  </div>
+</div>
+
+<div id="progressBar">
+  <div class="bar-label">CONTRÔLE DU TERRITOIRE</div>
+  <div class="bar-track">
+    <div id="playerBar" style="width:0%"></div>
+    <div id="enemy1Bar" style="width:0%"></div>
+    <div id="enemy2Bar" style="width:0%"></div>
+    <div id="enemy3Bar" style="width:0%"></div>
+  </div>
+  <div class="bar-row">
+    <span style="color:#00f5ff">■ TOI</span>
+    <span style="color:#ff3366">■ ROUGE</span>
+    <span style="color:#ff9500">■ ORANGE</span>
+    <span style="color:#a855f7">■ VIOLET</span>
+  </div>
+</div>
+
+<div id="centerUI">
+  <div id="startScreen">
+    <h1>TERRITO</h1>
+    <div class="subtitle">Conquête de territoire</div>
+    <div class="instructions">
+      <span>→ Déplace ta souris</span> pour peindre le territoire<br>
+      <span>→ Ta traînée</span> crée des zones colorées<br>
+      <span>→ Encercle des zones</span> pour les capturer en masse<br>
+      <span>→ Évite</span> les ennemis — ils volent ton territoire<br>
+      <span>→ Objectif :</span> contrôler le maximum en 2 minutes
+    </div>
+    <button onclick="startGame()">LANCER LA PARTIE</button>
+  </div>
+
+  <div id="gameOverScreen">
+    <h1>FIN</h1>
+    <div class="subtitle">Résultat final</div>
+    <div class="final-score" id="finalScore">0%</div>
+    <div class="result-text" id="resultText">...</div>
+    <button onclick="startGame()">REJOUER</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  if (game) game.resize();
+});
+
+// ---- CONFIG ----
+const CELL = 8; // pixel size per territory cell
+const TRAIL_LENGTH = 24;
+const ENEMY_COUNT = 3;
+const GAME_DURATION = 120; // seconds
+
+const COLORS = {
+  player: '#00f5ff',
+  playerFill: 'rgba(0,245,255,0.3)',
+  enemies: ['#ff3366','#ff9500','#a855f7'],
+  enemiesFill: ['rgba(255,51,102,0.3)','rgba(255,149,0,0.3)','rgba(168,85,247,0.3)'],
+  neutral: 'rgba(255,255,255,0.02)',
+};
+
+let game = null;
+let mouseX = canvas.width / 2;
+let mouseY = canvas.height / 2;
+
+canvas.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+function startGame() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('gameOverScreen').style.display = 'none';
+  game = new Game();
+  game.start();
+}
+
+// ---- TERRITORY GRID ----
+class TerritoryGrid {
+  constructor(w, h, cellSize) {
+    this.cellSize = cellSize;
+    this.cols = Math.ceil(w / cellSize);
+    this.rows = Math.ceil(h / cellSize);
+    this.data = new Uint8Array(this.cols * this.rows); // 0=neutral,1=player,2-4=enemies
+  }
+
+  index(cx, cy) { return cy * this.cols + cx; }
+  cellAt(x, y) {
+    const cx = Math.floor(x / this.cellSize);
+    const cy = Math.floor(y / this.cellSize);
+    if (cx < 0 || cy < 0 || cx >= this.cols || cy >= this.rows) return -1;
+    return this.index(cx, cy);
+  }
+  set(x, y, owner) {
+    const i = this.cellAt(x, y);
+    if (i >= 0) this.data[i] = owner;
+  }
+  get(x, y) {
+    const i = this.cellAt(x, y);
+    if (i < 0) return -1;
+    return this.data[i];
+  }
+
+  countOwner(owner) {
+    let count = 0;
+    for (let i = 0; i < this.data.length; i++) if (this.data[i] === owner) count++;
+    return count;
+  }
+
+  draw(ctx) {
+    const cs = this.cellSize;
+    for (let cy = 0; cy < this.rows; cy++) {
+      for (let cx = 0; cx < this.cols; cx++) {
+        const owner = this.data[this.index(cx, cy)];
+        if (owner === 0) continue;
+        const color = owner === 1 ? COLORS.playerFill : COLORS.enemiesFill[owner - 2];
+        ctx.fillStyle = color;
+        ctx.fillRect(cx * cs, cy * cs, cs, cs);
+      }
+    }
+  }
+
+  resize(w, h) {
+    this.cols = Math.ceil(w / this.cellSize);
+    this.rows = Math.ceil(h / this.cellSize);
+    this.data = new Uint8Array(this.cols * this.rows);
+  }
+}
+
+// ---- SNAKE-STYLE ENTITY ----
+class Entity {
+  constructor(x, y, owner, color, isPlayer) {
+    this.x = x;
+    this.y = y;
+    this.owner = owner;
+    this.color = color;
+    this.isPlayer = isPlayer;
+    this.trail = [];
+    this.speed = isPlayer ? 4 : 1.8 + Math.random() * 0.8;
+    this.radius = isPlayer ? 10 : 8;
+    this.angle = Math.random() * Math.PI * 2;
+    this.turnSpeed = 0.04 + Math.random() * 0.03;
+    this.targetX = x;
+    this.targetY = y;
+  }
+
+  update(grid, mouseX, mouseY, others) {
+    if (this.isPlayer) {
+      const dx = mouseX - this.x;
+      const dy = mouseY - this.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist > 4) {
+        this.x += (dx / dist) * this.speed;
+        this.y += (dy / dist) * this.speed;
+      }
+    } else {
+      // AI: wander toward neutral/enemy territory
+      this.angle += (Math.random() - 0.5) * this.turnSpeed * 2;
+      // occasionally target neutral zones
+      if (Math.random() < 0.01) {
+        const rx = Math.random() * canvas.width;
+        const ry = Math.random() * canvas.height;
+        this.angle = Math.atan2(ry - this.y, rx - this.x);
+      }
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      // bounce
+      if (this.x < 20 || this.x > canvas.width - 20) this.angle = Math.PI - this.angle;
+      if (this.y < 20 || this.y > canvas.height - 20) this.angle = -this.angle;
+      this.x = Math.max(20, Math.min(canvas.width - 20, this.x));
+      this.y = Math.max(20, Math.min(canvas.height - 20, this.y));
+    }
+
+    // paint territory
+    grid.set(this.x, this.y, this.owner);
+    // paint around
+    for (let r = -grid.cellSize; r <= grid.cellSize; r += grid.cellSize) {
+      for (let c = -grid.cellSize; c <= grid.cellSize; c += grid.cellSize) {
+        grid.set(this.x + c, this.y + r, this.owner);
+      }
+    }
+
+    // trail
+    this.trail.push({x: this.x, y: this.y});
+    if (this.trail.length > TRAIL_LENGTH) this.trail.shift();
+  }
+
+  draw(ctx) {
+    // Draw trail
+    if (this.trail.length > 1) {
+      for (let i = 1; i < this.trail.length; i++) {
+        const t = i / this.trail.length;
+        ctx.strokeStyle = this.color;
+        ctx.globalAlpha = t * 0.6;
+        ctx.lineWidth = (this.radius * 2) * t;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(this.trail[i-1].x, this.trail[i-1].y);
+        ctx.lineTo(this.trail[i].x, this.trail[i].y);
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // glow
+    const grd = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
+    grd.addColorStop(0, this.color);
+    grd.addColorStop(1, 'transparent');
+    ctx.globalAlpha = 0.15;
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // body
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 20;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // inner highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.beginPath();
+    ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.35, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ---- PARTICLES ----
+class Particle {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    this.vx = (Math.random() - 0.5) * 4;
+    this.vy = (Math.random() - 0.5) * 4;
+    this.color = color;
+    this.life = 1;
+    this.decay = 0.04 + Math.random() * 0.04;
+    this.size = 2 + Math.random() * 3;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life -= this.decay;
+    this.vx *= 0.95;
+    this.vy *= 0.95;
+  }
+  draw(ctx) {
+    ctx.globalAlpha = this.life;
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 6;
+    const r = Math.max(0, this.size * this.life);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+  }
+}
+
+// ---- GAME ----
+class Game {
+  constructor() {
+    this.grid = new TerritoryGrid(canvas.width, canvas.height, CELL);
+    this.player = new Entity(canvas.width/2, canvas.height/2, 1, COLORS.player, true);
+    this.enemies = [
+      new Entity(100, 100, 2, COLORS.enemies[0], false),
+      new Entity(canvas.width-100, 100, 3, COLORS.enemies[1], false),
+      new Entity(canvas.width/2, canvas.height-100, 4, COLORS.enemies[2], false),
+    ];
+    this.particles = [];
+    this.timeLeft = GAME_DURATION;
+    this.lastTime = 0;
+    this.running = false;
+    this.frame = 0;
+    this.animId = null;
+
+    // grid lines prerendered
+    this.gridCanvas = document.createElement('canvas');
+    this.gridCanvas.width = canvas.width;
+    this.gridCanvas.height = canvas.height;
+    this.drawGrid();
+  }
+
+  drawGrid() {
+    const gc = this.gridCanvas.getContext('2d');
+    gc.clearRect(0, 0, this.gridCanvas.width, this.gridCanvas.height);
+    gc.strokeStyle = 'rgba(0,200,255,0.04)';
+    gc.lineWidth = 0.5;
+    for (let x = 0; x < this.gridCanvas.width; x += CELL) {
+      gc.beginPath(); gc.moveTo(x, 0); gc.lineTo(x, this.gridCanvas.height); gc.stroke();
+    }
+    for (let y = 0; y < this.gridCanvas.height; y += CELL) {
+      gc.beginPath(); gc.moveTo(0, y); gc.lineTo(this.gridCanvas.width, y); gc.stroke();
+    }
+  }
+
+  start() {
+    this.running = true;
+    this.lastTime = performance.now();
+    this.loop(this.lastTime);
+  }
+
+  resize() {
+    this.grid.resize(canvas.width, canvas.height);
+    this.gridCanvas.width = canvas.width;
+    this.gridCanvas.height = canvas.height;
+    this.drawGrid();
+  }
+
+  loop(ts) {
+    const dt = (ts - this.lastTime) / 1000;
+    this.lastTime = ts;
+    this.frame++;
+
+    if (this.running) {
+      this.timeLeft -= dt;
+      if (this.timeLeft <= 0) { this.timeLeft = 0; this.endGame(); return; }
+    }
+
+    this.update(dt);
+    this.render();
+
+    this.animId = requestAnimationFrame(t => this.loop(t));
+  }
+
+  update(dt) {
+    this.player.update(this.grid, mouseX, mouseY, this.enemies);
+    this.enemies.forEach(e => e.update(this.grid, 0, 0, [this.player, ...this.enemies]));
+
+    // spawn particles occasionally
+    if (this.frame % 8 === 0) {
+      this.particles.push(new Particle(this.player.x + (Math.random()-0.5)*10, this.player.y + (Math.random()-0.5)*10, COLORS.player));
+    }
+    this.enemies.forEach((e, i) => {
+      if (this.frame % 12 === 0) {
+        this.particles.push(new Particle(e.x + (Math.random()-0.5)*8, e.y + (Math.random()-0.5)*8, COLORS.enemies[i]));
+      }
+    });
+
+    this.particles = this.particles.filter(p => p.life > 0);
+    this.particles.forEach(p => p.update());
+
+    // Update UI
+    const total = this.grid.cols * this.grid.rows;
+    const playerPct = Math.round(this.grid.countOwner(1) / total * 100);
+    const e1 = Math.round(this.grid.countOwner(2) / total * 100);
+    const e2 = Math.round(this.grid.countOwner(3) / total * 100);
+    const e3 = Math.round(this.grid.countOwner(4) / total * 100);
+    const bestEnemy = Math.max(e1, e2, e3);
+
+    document.getElementById('playerScore').textContent = playerPct + '%';
+    document.getElementById('enemyScore').textContent = bestEnemy + '%';
+    document.getElementById('playerBar').style.width = playerPct + '%';
+    document.getElementById('enemy1Bar').style.width = e1 + '%';
+    document.getElementById('enemy2Bar').style.width = e2 + '%';
+    document.getElementById('enemy3Bar').style.width = e3 + '%';
+
+    const mins = Math.floor(this.timeLeft / 60);
+    const secs = Math.floor(this.timeLeft % 60).toString().padStart(2,'0');
+    document.getElementById('timerUI').textContent = `${mins}:${secs}`;
+  }
+
+  render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // bg
+    ctx.fillStyle = '#050810';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // grid
+    ctx.drawImage(this.gridCanvas, 0, 0);
+
+    // territory
+    this.grid.draw(ctx);
+
+    // particles (below entities)
+    this.particles.forEach(p => p.draw(ctx));
+
+    // entities
+    this.enemies.forEach(e => e.draw(ctx));
+    this.player.draw(ctx);
+
+    // custom cursor ring
+    ctx.strokeStyle = 'rgba(0,245,255,0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(mouseX, mouseY, 18, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,245,255,0.15)';
+    ctx.beginPath();
+    ctx.arc(mouseX, mouseY, 28, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  endGame() {
+    this.running = false;
+    const total = this.grid.cols * this.grid.rows;
+    const playerPct = Math.round(this.grid.countOwner(1) / total * 100);
+    const e1 = Math.round(this.grid.countOwner(2) / total * 100);
+    const e2 = Math.round(this.grid.countOwner(3) / total * 100);
+    const e3 = Math.round(this.grid.countOwner(4) / total * 100);
+    const bestEnemy = Math.max(e1, e2, e3);
+
+    document.getElementById('finalScore').textContent = playerPct + '%';
+
+    let msg;
+    if (playerPct >= 50) msg = '🏆 VICTOIRE TOTALE — Tu as dominé la carte !';
+    else if (playerPct > bestEnemy) msg = '✅ VICTOIRE — Tu contrôles le plus de territoire.';
+    else if (playerPct === bestEnemy) msg = '🤝 ÉGALITÉ — Match serré !';
+    else msg = '❌ DÉFAITE — Les ennemis ont pris le dessus.';
+
+    document.getElementById('resultText').textContent = msg;
+    document.getElementById('gameOverScreen').style.display = 'block';
+  }
+}
+</script>
+</body>
+</html>
