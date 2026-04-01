@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Terry Torry — Browser Game · Khalil</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <style>
@@ -22,15 +22,16 @@
       --text: #e2e2ee;
       --text-muted: #7a7a9a;
       --text-dim: #4a4a6a;
-      --mono: 'IBM Plex Mono', monospace;
-      --sans: 'IBM Plex Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+      --display: 'Syne', sans-serif;
+      --serif: 'Instrument Serif', serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       background: var(--bg); color: var(--text);
-      font-family: var(--sans); font-weight: 300;
+      font-family: var(--mono); font-weight: 300;
       line-height: 1.7; min-height: 100vh;
     }
 
@@ -55,7 +56,7 @@
       position: relative;
     }
     .hero-label { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.2rem; }
-    .hero h1 { font-family: var(--mono); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1.2rem; }
+    .hero h1 { font-family: var(--display); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1.2rem; }
     .hero-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 620px; margin-bottom: 2rem; line-height: 1.8; }
     .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2.5rem; }
     .tag { font-family: var(--mono); font-size: 0.7rem; padding: 0.3rem 0.75rem; border: 1px solid var(--border-light); color: var(--text-muted); border-radius: 2px; letter-spacing: 0.05em; }
@@ -235,14 +236,17 @@
       </div>
       <div class="game-preview">
         <div class="game-preview-header">
-          <span class="game-preview-title">terry-torry.html — demo render</span>
-          <span class="game-preview-badge">● CANVAS</span>
+          <span class="game-preview-title">terry-torry.html — live</span>
+          <span class="game-preview-badge">● PLAYABLE</span>
         </div>
-        <canvas id="gameCanvas" width="860" height="320"></canvas>
+        <iframe
+          src="../games/terry-torry.html"
+          width="100%"
+          height="480"
+          style="display:block; border:none;"
+          title="Terry Torry Game"
+        ></iframe>
       </div>
-      <p style="margin-top:0.75rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim)">
-        → Embedded demo above. Link the actual game: <a href="../games/territory-game.html" style="color:var(--accent)">Play Terry Torry →</a>
-      </p>
     </div>
 
     <!-- SYSTEMS -->
@@ -489,113 +493,6 @@ requestAnimationFrame(ts => { lastTime = ts; loop(ts); });</code></pre>
 
   </div>
 
-  <script>
-    hljs.highlightAll();
-
-    // Minimal canvas demo in the preview
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    const COLS = 22, ROWS = 8;
-    const CW = W / COLS, CH = H / ROWS;
-
-    // Init grid
-    const grid = Array.from({ length: ROWS }, (_, r) =>
-      Array.from({ length: COLS }, (_, c) => ({ owner: null }))
-    );
-
-    const player = { x: 1, y: 1, id: 'player', color: '#f97316' };
-    const ai     = { x: COLS - 2, y: ROWS - 2, id: 'ai', color: '#7c6af7' };
-
-    function claimCell(x, y, entity) {
-      if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return;
-      grid[y][x].owner = entity.id;
-      spawnBurst(x * CW + CW/2, y * CH + CH/2, entity.color);
-    }
-
-    claimCell(player.x, player.y, player);
-    claimCell(ai.x, ai.y, ai);
-
-    // Particles
-    const particles = Array.from({ length: 200 }, () => ({ active: false }));
-    function spawnBurst(x, y, color) {
-      let n = 0;
-      for (const p of particles) {
-        if (p.active) continue;
-        p.active = true; p.x = x; p.y = y;
-        p.vx = (Math.random() - 0.5) * 3;
-        p.vy = (Math.random() - 0.5) * 3;
-        p.alpha = 1; p.color = color;
-        p.decay = 0.04 + Math.random() * 0.03;
-        if (++n >= 8) break;
-      }
-    }
-
-    function moveEntity(entity) {
-      const dirs = [[0,-1],[0,1],[-1,0],[1,0]];
-      const weights = dirs.map(([dx,dy]) => {
-        const nx = entity.x+dx, ny = entity.y+dy;
-        if (nx<0||nx>=COLS||ny<0||ny>=ROWS) return 0;
-        const o = grid[ny][nx].owner;
-        return o === null ? 1 : o === entity.id ? 0.05 : 0.2;
-      });
-      const total = weights.reduce((a,b)=>a+b,0);
-      if (!total) return;
-      let r = Math.random() * total;
-      for (let i = 0; i < dirs.length; i++) {
-        r -= weights[i];
-        if (r <= 0) {
-          const nx = entity.x + dirs[i][0], ny = entity.y + dirs[i][1];
-          if (nx<0||nx>=COLS||ny<0||ny>=ROWS) return;
-          entity.x = nx; entity.y = ny;
-          claimCell(nx, ny, entity);
-          return;
-        }
-      }
-    }
-
-    let acc = 0, last = 0;
-    function loop(ts) {
-      const dt = ts - last; last = ts; acc += dt;
-      while (acc >= 120) { moveEntity(player); moveEntity(ai); acc -= 120; }
-
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#050508';
-      ctx.fillRect(0, 0, W, H);
-
-      // Draw grid
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const cell = grid[r][c];
-          if (cell.owner === 'player') ctx.fillStyle = 'rgba(249,115,22,0.35)';
-          else if (cell.owner === 'ai') ctx.fillStyle = 'rgba(124,106,247,0.35)';
-          else ctx.fillStyle = '#111118';
-          ctx.fillRect(c*CW+1, r*CH+1, CW-2, CH-2);
-        }
-      }
-
-      // Draw player & AI dots
-      for (const e of [player, ai]) {
-        ctx.beginPath();
-        ctx.arc(e.x*CW+CW/2, e.y*CH+CH/2, CW*0.3, 0, Math.PI*2);
-        ctx.fillStyle = e.color;
-        ctx.fill();
-      }
-
-      // Particles
-      for (const p of particles) {
-        if (!p.active) continue;
-        p.x += p.vx; p.y += p.vy; p.alpha -= p.decay;
-        if (p.alpha <= 0) { p.active = false; continue; }
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x-2, p.y-2, 4, 4);
-      }
-      ctx.globalAlpha = 1;
-
-      requestAnimationFrame(loop);
-    }
-    requestAnimationFrame(ts => { last = ts; loop(ts); });
-  </script>
+  <script>hljs.highlightAll();</script>
 </body>
 </html>
